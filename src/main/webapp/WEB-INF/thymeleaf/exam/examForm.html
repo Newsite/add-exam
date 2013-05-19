@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="utf-8"/>
+    <title>Edit Exam information</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="edit exam information"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment"></body>
+<div class="container">
+    <section id="forms">
+        <div class="row">
+            <form method="post" class="form-horizontal well" th:object="${exam}" th:action="@{/exam/save.html}">
+                <fieldset>
+                    <legend>Edit Exam information</legend>
+                    <div class="control-group">
+                        <label class="control-label" for="exam-name">Exam name</label>
+                        <div class="controls">
+                            <input type="hidden" th:field="*{id}" />
+                            <input type="text" class="input-xlarge" id="exam-name" th:field="*{name}" required="true"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="description">Description</label>
+                        <div class="controls">
+                            <textarea class="input-xlarge" id="description" rows="6"  th:field="*{description}"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="questions-count">Number of questions</label>
+                        <div class="controls">
+                            <input type="number" class="input-xlarge" min="1" id="questions-count" required="true" th:field="*{questionsCount}"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="pass-score">Passing Score</label>
+                        <div class="controls">
+                            <input type="number" class="input-xlarge" max="100" min="0" id="pass-score" required="true" th:field="*{passScore}"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="total-time">Time for passing exam(in minutes)</label>
+                        <div class="controls">
+                            <input type="number" class="input-xlarge" min="0" id="total-time" th:field="*{totalTime}" required="true"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="access-type">Select visibility</label>
+                        <div class="controls">
+                            <select id="access-type" th:field="*{access}">
+                                <option th:value="${accessTypes[0]}" selected = "true">All</option>
+                                <option th:value="${accessTypes[1]}">Only addExam users</option>
+                                <option th:value="${accessTypes[2]}">Only invited users</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="randomOrder">Random order</label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="checkbox" id="randomOrder" th:field = "*{randomOrder}" />
+                                If checked questions will appear in random order
+                            </label>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="showAnswers">Show answers</label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="checkbox" id="showAnswers" th:field = "*{showAnswers}" />
+                                If checked user will be able to review correct answers after taking exam
+                            </label>
+                        </div>
+                    </div>
+                    <div class="control-group warning" th:if="${exam.id}">
+                        <label class="control-label" for="published">Publish Exam?</label>
+                        <!-- disabled publish checkbox-->
+                        <div class="controls" th:if="${notCompletedMsg}">
+                            <label class="checkbox">
+                                <input type="checkbox" id="published" th:field = "*{published}" disabled="" />
+                            </label>
+                        </div>
+                        <!--enabled publish checkbox -->
+                        <div class="controls" th:if="${isCompletedExam}">
+                            <label class="checkbox">
+                                <input type="checkbox" id="published" th:field = "*{published}"/>
+                                <p>You wouldn't we able to edit exam information, when it is published or when someone takes attempt.</p>
+                            </label>
+                        </div>
+                    </div>
+                    <div id="warning-alert-div">
+                        <div class="alert alert-error" th:if="${notCompletedMsg}" >
+                            <p>Exam is not completed and could not be published.</p>
+                            <strong><p th:text="${notCompletedMsg}" /></strong>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <a type="reset" class="btn" href="/dashboard.html">Close</a>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </section>
+
+    <!--question block -->
+    <section id="tables" th:if="${exam.id}">
+        <div class="page-header">
+            <h1>Questions</h1>
+        </div>
+
+        <table class="table table-bordered table-striped table-hover" th:if="${exam.questions}">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Question body</th>
+                <th>Completed</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${questions}" th:id="@{'questionRow-' + ${item.id}}" >
+                <td th:text="${item.id}" />
+                <td th:text="${item.body}" />
+                <td>
+                    <input type="checkbox" th:checked = "${item.completed}" disabled="true" />
+                </td>
+                <td><a class="btn btn-primary btn-small" th:href="@{'/exam/' + ${exam.id} + '/question/' + ${item.id} + '/edit.html'}">Edit</a></td>
+                <td><button class="btn btn-primary btn-small" th:onclick="'javascript:showRemoveQuestionModal(\''+ ${item.id} + '\');'">Delete</button></td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <a class="btn btn-primary btn-large" th:href="@{'/exam/' + ${exam.id} + '/question/new.html'}">Add question</a>
+        </div>
+    </section>
+
+    <!-- Modal popups block-->
+    <div id="deleteExamQuestionModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="confirmationLabel" aria-hidden="true">
+        <div class="modal-header">
+            <h3 id="confirmationLabel">Confirmation</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this question ?</p>
+        </div>
+        <input type="hidden" id="questionIdHiddenInput" />
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="removeQuestion()">Yes</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+        </div>
+    </div>
+    <!-- finish modal popups block> -->
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag" />
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment"/>
+<script th:src="@{/js/bootstrap/jqBootstrapValidation.js}" />
+<script>
+    $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
+</script>
+
+<script th:src="@{/js/custom/exam.js}" />
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="utf-8"/>
+    <title>Exam information</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="edit exam information"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment"></body>
+<div class="container">
+
+    <div class="container">
+        <div class="row">
+            <div class="span4 offset4 well">
+                <legend>Please Sign In</legend>
+                <div class="alert alert-error" th:if="${loginError}">
+                    <a class="close" data-dismiss="alert">x</a>Incorrect Username or Password!
+                </div>
+                <form method="POST" th:action="@{/j_spring_security_check}" accept-charset="UTF-8">
+                    <input type="text" id="j_username" name="j_username" class="span4" placeholder="Username" />
+                    <input type="password" id="j_password" name="j_password" class="span4" placeholder="Password" />
+                    <label class="checkbox">
+                        <input type="checkbox" name="_spring_security_remember_me" value="1"> Remember Me </input>
+                    </label>
+                    <button type="submit" name="submit" class="btn btn-info btn-block">Sign in</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"></body>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment"></body>
+</body>
+</html>
+

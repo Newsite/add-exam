@@ -1,0 +1,46 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+        xmlns:security="http://www.springframework.org/schema/security"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:p="http://www.springframework.org/schema/p"
+        xmlns:c="http://www.springframework.org/schema/c"
+        xsi:schemaLocation="http://www.springframework.org/schema/security
+        http://www.springframework.org/schema/security/spring-security.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Empty filter chain pages -->
+    <security:http pattern="/login.html" security="none"/>
+    <security:http pattern="/register.html" security="none"/>
+
+    <security:http auto-config="true">
+        <security:intercept-url pattern="/dashboard.html" access="ROLE_TEACHER" />
+        <security:intercept-url pattern="/exam/new.html" access="ROLE_TEACHER" />
+        <security:intercept-url pattern="/exam/*.html" access="ROLE_TEACHER, ROLE_STUDENT" />
+        <security:intercept-url pattern="/exam/**" access="ROLE_TEACHER" />
+        <security:intercept-url pattern="/search/**" access="ROLE_TEACHER" />
+        <security:intercept-url pattern="/attempt/**" access="ROLE_TEACHER, ROLE_STUDENT" />
+        <security:form-login login-processing-url="/j_spring_security_check" login-page="/login.html"
+                             default-target-url="/dashboard.html" authentication-failure-url="/login-error.html" />
+        <security:http-basic />
+        <security:remember-me key="examSecurityKey" token-validity-seconds="864000" />
+        <security:logout logout-success-url="/home.html" />
+    </security:http>
+
+    <security:jdbc-user-service id="userService" data-source-ref="dataSource"
+    users-by-username-query="select username, password, 'true' as enabled from users where username = ?"
+    authorities-by-username-query="select username, role from users where username = ?" />
+
+    <bean id="passwordEncoder" class="org.springframework.security.crypto.password.StandardPasswordEncoder" c:secret="${hashing.key}" />
+
+    <bean id="authenticationProvider" class="org.springframework.security.authentication.dao.DaoAuthenticationProvider"
+          p:passwordEncoder-ref="passwordEncoder" p:userDetailsService-ref="userService" />
+
+    <!-- thymeleaf bean for supporting spring security acl -->
+    <bean id="webexpressionHandler" class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler" />
+
+    <security:authentication-manager>
+        <security:authentication-provider ref="authenticationProvider" />
+    </security:authentication-manager>
+
+
+</beans>

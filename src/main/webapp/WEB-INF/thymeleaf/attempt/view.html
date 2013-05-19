@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="utf-8"/>
+    <title>Edit Exam information</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="edit exam information"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment" />
+<div class="container">
+    <section id="view">
+        <div class="page-header">
+                <h1> </h1>
+        </div>
+        <div class="row">
+            <!-- pager -->
+            <ul class="pager">
+                <li th:if="${firstQuestion}" class="previous disabled"><a href="#">&larr; Previous</a></li>
+                <li th:unless="${firstQuestion}" class="previous"><a th:href="@{'/attempt/' + ${attemptId} +'/previous.html'}">&larr; Previous</a></li>
+                <li th:if="${lastQuestion}" class="next disabled"><a href="#'}">Next &rarr;</a></li>
+                <li th:unless="${lastQuestion}" class="next"><a th:href="@{'/attempt/' + ${attemptId} +'/next.html'}">Next &rarr;</a></li>
+            </ul>
+            <div class="span10 offset1">
+                <h2 th:text="${attempt.exam.name}" />
+                <!-- timer -->
+                <body layout:include="fragments/timer :: timerFragment" />
+
+                <div class="control-group">
+                    <div class="controls">
+                        <label class="checkbox">
+                            <input type="checkbox" name="marked" th:checked="${form.attemptQuestion.marked}" id="marked-checkbox"
+                                   th:onclick="'javascript:markQuestion(\''+ ${markedUrl} + '\');'"/>
+                            <p>Mark this question</p>
+                        </label>
+                    </div>
+                </div>
+                <h3 th:text="'Question #' + ${attempt.currentQuestionNumber + 1} + ' of ' + ${attempt.exam.questionsCount}" />
+                <h5 th:utext="${form.attemptQuestion.question.body}" />
+                <form id="answerForm" method="post" th:object="${form}" th:action="@{'/attempt/'+ ${attemptId}+ '/answer.html'}">
+                    <fieldset>
+                        <div class="control-group" th:if="${MULTI_CHOICE}" th:each="item, stat : *{answers}">
+                            <div class="controls">
+                                <label class="checkbox">
+                                    <input type="hidden" th:field="*{answers[__${stat.index}__].id}" />
+                                    <input type="hidden" th:field="*{answers[__${stat.index}__].body}" />
+                                    <input type="checkbox" onchange="showWarning();" th:value = "${item.selected}" th:field="*{answers[__${stat.index}__].selected}" />
+                                    <p th:utext="${item.body}"/>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group" th:if="${SINGLE_ANSWER}" th:each="item, stat : *{answers}">
+                            <div class="controls">
+                                <label class="radio">
+                                    <input type="hidden" th:field="*{answers[__${stat.index}__].id}" />
+                                    <input type="hidden" th:field="*{answers[__${stat.index}__].body}" />
+                                    <input type="radio" onchange='showWarning();' th:value="${stat.index}" th:field="*{answerNumber}"/>
+                                    <div th:text="${item.body}" />
+                                </label>
+                            </div>
+                        </div>
+                        <!-- alert messages -->
+                        <div id="alert-div">
+                            <div class="alert alert-info" th:if="${isNotAnswered}">
+                                <strong>You didn't answer on question</strong>
+                            </div>
+                        </div>
+                        <div style="display:none;">
+                            <div id="warning-alert-div" >
+                                <div class="alert alert-error">
+                                    <strong>Your changes are not saved</strong>
+                                </div>
+                            </div>
+                            <div id="success-alert-div" >
+                                <div class="alert alert-success">
+                                    <strong>Your answer was saved</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- buttons block-->
+                        <div>
+                            <button type="submit" class="btn btn-primary">Save</button>
+                            <a class="btn btn-primary" th:href="@{'/attempt/' + ${attempt.id} +'/marked.html'}">View marked list</a>
+                            <button class="btn btn-danger" onclick="$('#finishExamModal').modal('show');">Finish exam</button>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"/>
+</div>
+
+<!-- Modal popups block-->
+<div id="finishExamModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-header">
+        <h3>Confirmation</h3>
+    </div>
+    <div class="modal-body">
+        <p>Are you sure you want to finish this exam ? You wouldn't be able to edit your answers. </p>
+    </div>
+    <div class="modal-footer">
+        <a class="btn btn-primary" th:href="@{'/attempt/' + ${attempt.id} +'/finish.html'}">Yes</a>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+    </div>
+</div>
+<!-- finish modal popups block> -->
+
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment"></body>
+<script th:src="@{/js/jquery/jquery.form.js}" />
+<script th:src="@{/js/custom/view.question.js}" />
+<!-- ajax form saving initialization -->
+<script th:inline="javascript">
+    $(function () {
+        /*<![CDATA[*/
+        var attemptId = /*[[${attempt.id}]]*/ "";
+        /*]]>*/
+        $("#answerForm").ajaxForm(
+            {url: attemptId +'/save.html', type: 'post',
+                success: function(data){
+                    showSuccessSaveMessage();
+                }
+            }
+        );
+    });
+</script>
+</body>
+</html>

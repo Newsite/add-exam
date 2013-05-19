@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <div layout:include="fragments/header :: headerFragment" th:remove="tag"/>
+
+    <!--text editor styles-->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-text-editor.css}" />
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet" />
+
+    <meta charset="utf-8"/>
+    <title>Question info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="A calm, blue sky."/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment"></body>
+<div class="container">
+    <section id="forms">
+        <div class="row">
+            <form id="question-form" method="post" class="form-horizontal well" th:object="${question}" th:action="@{'/exam/' + ${question.exam.id} + '/question/save.html'}">
+                <fieldset>
+                    <legend>Question information</legend>
+                    <!-- question body block -->
+                    <div class="control-group">
+                        <p><strong>Question body*</strong></p>
+                        <div id="questionBodyToolbar" class="btn-toolbar" data-role="editor-toolbar" data-target="#questionBodyEditor">
+                            <div layout:include="fragments/textEditor :: textEditor" th:remove="tag" />
+                        </div>
+                        <div id="questionBodyEditor" class="editor" th:utext="${question.body}" />
+                        <input id="questionId" type="hidden" th:field="*{id}" />
+                        <div class="controls">
+                            <input type="hidden" id="question-body" th:field="*{body}" required="true"/>
+                        </div>
+                    </div>
+                    <!-- explanation block -->
+                    <div class="control-group" th:if="${showExplanationTextarea}">
+                        <p> <strong>Explanation</strong></p>
+                        <div>
+                            <textarea id="explanation" style="width:95%;" class="editor" th:field="*{explanation}" rows="5"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="access-type">Select question type</label>
+                        <div class="controls">
+                            <select id="access-type" th:field="*{type}">
+                                <option th:value="${types[0]}">Single answer</option>
+                                <option th:value="${types[1]}">Several answers</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="randomOrder">Random order</label>
+                        <div class="controls">
+                            <label class="checkbox">
+                                <input type="checkbox" id="randomOrder" th:field = "*{randomOrder}" />
+                                If checked answers will appear in random order
+                            </label>
+                        </div>
+                    </div>
+                    <div id="warning-alert-div">
+                        <div class="alert alert-error" th:if="${notCompletedMsg}">
+                            <p>Question is not completed and could not be published.</p>
+                            <strong><p th:text="${notCompletedMsg}" /></strong>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button class="btn btn-primary" onclick="saveQuestion();">Save</button>
+                        <a class="btn" th:href="@{'/exam/' + ${question.exam.id} + '/edit.html'}" >Close</a>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </section>
+
+    <!--answers block -->
+    <section id="tables" th:if="${question.id}">
+        <div class="page-header">
+            <h1>Answers</h1>
+        </div>
+
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Body</th>
+                <th>Correct</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${answers}" th:id="@{'answerRow-' + ${item.id}}">
+                <td th:text="${item.id}" />
+                <td th:text="${item.body}" />
+                <td>
+                    <input type="checkbox" th:checked = "${item.correct}" disabled="true" />
+                </td>
+                <td><button class="btn btn-primary btn-small"
+                            th:onclick="'javascript:showEditAnswerModal(\''+ ${item.id} + '\', \''+ ${item.body} + '\', \''+ ${item.correct} + '\');'">Edit</button></td>
+                <td><button class="btn btn-primary btn-small" th:onclick="'javascript:showRemoveAnswerModal(\''+ ${item.id} + '\');'">Delete</button></td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <p>You are not able to add more than 8 answers !</p>
+        </div>
+        <div th:if="${showAddAnswerButton}">
+            <button class="btn btn-primary btn-large" onclick="showEditAnswerModal()">Add answer</button>
+        </div>
+    </section>
+
+    <!-- Modal popups block-->
+    <!-- remove answer popup -->
+    <div id="deleteQuestionAnswerModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Confirmation</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this answer ?</p>
+        </div>
+        <input type="hidden" id="answerIdHiddenInput" />
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="removeAnswer();">Yes</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+        </div>
+    </div>
+
+    <!-- edit answer popup-->
+    <div id="editQuestionAnswerModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Answer</h3>
+        </div>
+        <div class="modal-body">
+            <form class="well" id="answer-form" method="post" th:object="${answer}" th:action="@{'/exam/' + ${question.exam.id} + '/question/' + ${question.id} + '/answer/save.html'}">
+                <fieldset>
+                    <!-- answer body block -->
+                    <div class="control-group">
+                        <p>Body</p>
+                        <div class="btn-toolbar" data-role="editor-toolbar" data-target="#answerBodyEditor">
+                            <div layout:include="fragments/textEditor :: textEditor" th:remove="tag" />
+                        </div>
+
+                        <div id="answerBodyEditor" class="editor" contenteditable="true"></div>
+                        <input type="hidden" id="answer-id" th:field="*{id}"/>
+                        <div class="controls">
+                            <input type="hidden" th:field="*{body}" id="answer-body" required="true"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <span>Correct  <input th:field="*{correct}" type="checkbox" id="answerCorrect" /></span>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="saveAnswer()">Save and Close</button>
+            <button class="btn" onclick="closeAnswerEditModal()">Cancel</button>
+        </div>
+    </div>
+    <!-- finish modal popups block> -->
+
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"></body>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment"></body>
+<!-- form validation-->
+<script th:src="@{/js/bootstrap/jqBootstrapValidation.js}" />
+<script>
+    $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
+</script>
+
+<!-- text editors initialization-->
+<script th:src="@{/js/bootstrap/bootstrap-editor.js}" />
+<script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"></script>
+<script src="https://mindmup.s3.amazonaws.com/lib/jquery.hotkeys.js"></script>
+<script>
+    $(function () {
+        $('#questionBodyEditor').wysiwyg().cleanHtml();
+        $('#answerBodyEditor').wysiwyg();
+    } );
+</script>
+
+<script th:src="@{/js/custom/exam.js}" />
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<body layout:fragment="navbarFragment">
+
+    <!-- Navbar
+    ================================================== -->
+    <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="../">AddExam.com</a>
+                <div class="nav-collapse collapse" id="main-menu">
+                    <ul class="nav" id="main-menu-left">
+                        <li><a href="/home.html">Home</a></li>
+                        <li><a href="/dashboard.html">Dashboard</a></li>
+                        <li><a href="/reports.html">Reports</a></li>
+                        <li><a href="/prices.html">Prices</a></li>
+                    </ul>
+                    <!-- for NOT authenticated users -->
+                    <ul class="nav pull-right" id="main-menu-right" sec:authorize="!isAuthenticated()">
+                        <a class="btn btn-success" href="/login.html">Login</a>
+                        <a class="btn btn-danger" href="/register.html">Register</a>
+                    </ul>
+                    <!-- for authenticated users -->
+                    <ul class="nav pull-right" id="main-menu-right" sec:authorize="isAuthenticated()">
+                        <a class="btn" href="/profile.html">Edit profile</a>
+                        <a class="btn btn-danger" th:href="@{j_spring_security_logout}">Logout</a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <section>
+        <div class="page-header">
+            <h1> </h1>
+        </div>
+    </section>
+</body>
+</html>

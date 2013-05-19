@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="utf-8"/>
+    <title>Edit Exam information</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="edit exam information"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment"></body>
+<div class="container">
+    <section id="view">
+        <div class="row">
+            <div class="span10 offset1">
+                <h2 th:text="${exam.name}" />
+                <div>
+                    <h3>Instructions:</h3>
+                    <ul>
+                        <li>Each question has between 2 and 8 options. One or more answers may be correct.</li>
+                        <li>Attempt all questions since there are no penalties for incorrect answers.</li>
+
+                        <li>Your time remaining is shown in the top of page</li>
+                        <li>We propose to answer and save each question before proceeding to the next question.
+                            Also you can return back to previous question and change your answer.</li>
+                        <li>You can mark question and try to answer on it later.
+                            Go to marked list questions by clicking "View marked list" button.</li>
+                        <li>Your exam will be completed when you click "Finish" button or when time runs out.</li>
+                    </ul>
+                    <h3>Duration:</h3>
+                    <p th:text="@{'You will have ' + ${exam.totalTime} + ' minutes to answer '
+                    + ${exam.questionsCount}+ ' questions!'}"/>
+                    <h3 th:text="@{'Passing score: ' + ${exam.passScore} + ' %'}"/>
+                </div>
+                <!-- buttons block-->
+                <div>
+                    <a class="btn btn-danger btn-large" th:href="@{'/exam/' + ${exam.id} + '/attempt/new.html'}">Start Exam</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"></body>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment"></body>
+</body>
+</html>

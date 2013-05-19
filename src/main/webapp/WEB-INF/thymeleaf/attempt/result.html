@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="utf-8"/>
+    <title>View exam result</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="edit exam information"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment"></body>
+<div class="container">
+
+    <section id="view">
+        <div class="page-header">
+            <h1> </h1>
+        </div>
+        <div class="row">
+            <h3 th:text="${result.exam.name}" />
+            <div class="alert alert-error" th:if="${failed}">
+                <p><strong>You have failed exam!</strong></p>
+                <p><strong>Passing Score:</strong><span th:text="${result.exam.passScore}" /></p>
+                <p><strong>Your Score:</strong><span th:text="${result.resultScore}" /></p>
+            </div>
+            <div class="alert alert-success" th:if="${passed}">
+                <p><strong>Congratulations! You have passed exam!</strong></p>
+                <p><strong>Passing Score: </strong><span th:text="${result.exam.passScore}" /></p>
+                <p><strong>Your Score: </strong><span th:text="${result.resultScore}" /></p>
+            </div>
+            <div>
+                <a class="btn btn-primary btn-large" th:href="@{'/attempt/' + ${result.id} + '/review/1.html'}">View correct answers</a>
+            </div>
+        </div>
+    </section>
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"/>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment"></body>
+</body>
+</html>

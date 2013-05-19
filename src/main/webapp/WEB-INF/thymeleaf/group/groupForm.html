@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="utf-8"/>
+    <title>Edit Exam information</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="edit exam information"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment"></body>
+<div class="container">
+    <section id="forms">
+        <div class="row">
+            <form method="post" class="form-horizontal well" th:object="${group}" th:action="@{/group/save.html}">
+                <fieldset>
+                    <legend>Group information</legend>
+                    <div class="control-group">
+                        <label class="control-label" for="group-name">Group name</label>
+                        <div class="controls">
+                            <input id="groupId" type="hidden" th:field="*{id}" />
+                            <input type="text" class="input-xlarge" id="group-name" th:field="*{name}" required="true"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="description">Description</label>
+                        <div class="controls">
+                            <textarea class="input-xlarge" id="description" rows="6"  th:field="*{description}"/>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <a type="reset" class="btn" href="/dashboard.html">Close</a>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </section>
+
+    <!--tables block -->
+    <section id="tables" th:if="${group.id}">
+        <!-- exams -->
+        <div class="page-header">
+            <h1>Exams</h1>
+        </div>
+
+        <table id="examsTable" class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Exam name</th>
+                <th>Description</th>
+                <th>Edit</th>
+                <th>Remove from group</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${exams}" th:id="@{'examRow-' + ${item.id}}" >
+                <td th:text="${item.name}" />
+                <td th:text="${item.description}" />
+                <td><a class="btn btn-primary btn-small" th:href="@{'/exam/' + ${item.id} + '/edit.html'}">Edit</a></td>
+                <td><button class="btn btn-primary btn-small" th:onclick="'javascript:showRemoveExamModal(\''+ ${item.id} + '\');'">Delete</button></td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <button class="btn btn-primary btn-large" onclick="showAddExamModal();">Add exam</button>
+        </div>
+
+        <!-- students -->
+        <div class="page-header">
+            <h1>Students</h1>
+        </div>
+
+        <table id="studentsTable" class="table table-bordered table-striped table-hover" >
+            <thead>
+            <tr>
+                <th>Student name</th>
+                <th>Student email</th>
+                <th>Remove from group</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${students}" th:id="@{'studentRow-' + ${item.id}}" >
+                <td th:text="@{${item.firstName} + ' ' + ${item.lastName}}" />
+                <td th:text="${item.email}" />
+                <td><button class="btn btn-primary btn-small" th:onclick="'javascript:showRemoveStudentModal(\''+ ${item.id} + '\');'">Delete</button></td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <a class="btn btn-primary btn-large" onclick="showAddStudentModal();">Add student</a>
+        </div>
+
+    </section>
+
+    <!-- Modal popups block-->
+    <!-- remove exam from group modal -->
+    <div id="deleteExamModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Confirmation</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to remove exam from this group ?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="removeExam();">Yes</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+        </div>
+    </div>
+
+    <!-- delete student from group modal -->
+    <div id="deleteStudentModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Confirmation</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to remove student from this group ?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="removeStudent();">Yes</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+        </div>
+    </div>
+
+    <!-- add exam to group modal -->
+    <div id="addExamModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Add exam to this group</h3>
+        </div>
+        <div class="modal-body">
+            <div class="control-group" style="height: 125px;">
+                <div class="controls">
+                    <input id="examSearchInput" type="text" data-items="4" placeholder="select exam.." class="input-xlarge search-query" data-provide="typeahead" />
+                </div>
+                <p>If access type of selected exam is protected or public all user will have possibility to take exam.</p>
+                <p>If access type of selected exam is private, only students from this group will have possibility to take selected exam.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="addExamButton" class="btn btn-primary" disabled="" onclick="addExam();">Add</button>
+            <button class="btn" onclick="clearExamSearchInput();">Clear</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        </div>
+    </div>
+
+    <!-- add student to group modal -->
+    <div id="addStudentModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Add student to this group</h3>
+        </div>
+        <div class="modal-body">
+            <div class="control-group" style="height: 125px;">
+                <div class="controls">
+                    <input id="studentSearchInput" type="text" data-items="4" placeholder="select student.." class="input-xlarge search-query" data-provide="typeahead" />
+                </div>
+                <p>Selected user will have possibility to take any exam from this group.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="addStudentButton" class="btn btn-primary" disabled="" onclick="addStudent();">Add</button>
+            <button class="btn" onclick="clearStudentSearchInput();">Clear</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        </div>
+    </div>
+    <!-- finish modal popups block> -->
+    <div id="hiddenInputs" />
+    <input type="hidden" id="examIdHiddenInput" />
+    <input type="hidden" id="studentIdHiddenInput" />
+
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"></body>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment" th:remove="tag"></body>
+<script th:src="@{/js/bootstrap/jqBootstrapValidation.js}" />
+<script th:src="@{/js/bootstrap/bootstrap-typeahead.js}" />
+
+<script>
+    $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
+    // This example is in Javascript, collects html in some li's and returns it
+</script>
+
+<script th:src="@{/js/custom/group.js}" />
+
+</body>
+</html>

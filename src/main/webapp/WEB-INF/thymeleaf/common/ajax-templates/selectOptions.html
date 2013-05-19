@@ -1,0 +1,8 @@
+<!-- template which will return select options, model attribute ${options} should be defined -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <span span="display:none" id="select-options" th:each="option : ${options}">
+        <option th:value="${option.key}" th:text="${option.value}" />
+    </span>
+</body>
+</html>

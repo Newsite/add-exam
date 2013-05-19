@@ -1,0 +1,10 @@
+<!-- template which will return row with user information on group edit page,
+model attribute ${student} should be defined -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <tr th:id="@{'studentRow-' + ${student.id}}" >
+        <td th:text="${studentName}" />
+        <td th:text="${student.email}" />
+        <td><button class="btn btn-primary btn-small" th:onclick="'javascript:showRemoveStudentModal(\''+ ${student.id} + '\');'">Delete</button></td>
+    </tr>
+</body></html>

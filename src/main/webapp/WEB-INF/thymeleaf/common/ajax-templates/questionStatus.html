@@ -1,0 +1,8 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div class="alert alert-error" th:if="${notCompletedMsg}">
+        <p>Question is not completed and could not be published.</p>
+        <strong><p th:text="${notCompletedMsg}" /></strong>
+    </div>
+</body>
+</html>

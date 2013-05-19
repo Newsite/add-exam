@@ -1,0 +1,11 @@
+<!-- template which will return row with exam information,
+model attribute ${exam} should be defined -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <tr th:id="@{'examRow-' + ${exam.id}}" >
+        <td th:text="${exam.name}" />
+        <td th:text="${exam.description}" />
+        <td><a class="btn btn-primary btn-small" th:href="@{'/exam/' + ${exam.id} + '/edit.html'}">Edit</a></td>
+        <td><button class="btn btn-primary btn-small" th:onclick="'javascript:showRemoveExamModal(\''+ ${exam.id} + '\');'">Delete</button></td>
+    </tr>
+</body></html>

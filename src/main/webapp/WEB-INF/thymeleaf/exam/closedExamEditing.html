@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="utf-8"/>
+    <title>Exam information</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="edit exam information"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment"></body>
+<div class="container">
+
+    <section id="view">
+        <div class="row">
+            <h3 th:text="${exam.name}" />
+            <p th:text="${exam.description}" />
+            <div id="warning-alert-div" th:if="${editExamError}" >
+                <div class="alert alert-error">
+                    <p>You can not edit this exam.</p>
+                    <strong><p th:text="${editExamError}" /></strong>
+                </div>
+            </div>
+            <div th:if="${showUnPublishExamButton}">
+                <form method="post" th:action="@{'/exam/' + ${exam.id} + '/unpublish.html'}">
+                    <fieldset>
+                        <button type="submit" class="btn btn-primary">Unpublish Exam</button>
+                        <a class="btn" href="/dashboard.html">Return to Dashboard</a>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"></body>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment"></body>
+</body>
+</html>
