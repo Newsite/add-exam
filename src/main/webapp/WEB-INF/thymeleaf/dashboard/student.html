@@ -2,9 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head layout:include="fragments/header :: headerFragment">
     <meta charset="utf-8"/>
-    <title>Edit Exam information</title>
+    <title>Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="edit exam information"/>
+    <meta name="description" content="dashboard"/>
     <meta name="author" content="Maksym Goroshkevych"/>
 
 </head>
@@ -15,7 +15,7 @@
     <section id="tables">
         <!--exam list block -->
         <div class="page-header">
-            <h1>Exams</h1>
+            <h2>Exams joined to your groups</h2>
         </div>
 
         <table class="table table-bordered table-striped table-hover">
@@ -25,30 +25,30 @@
                 <th>Name</th>
                 <th>Questions</th>
                 <th>Published</th>
+                <th>Time</th>
+                <th>Passing Score</th>
                 <th>Link</th>
-                <th>Edit</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item : ${exams}">
-                <td th:text="${item.id}" />
+            <tr th:each="item,stat : ${exams}">
+                <td th:text="${stat.index + 1}" />
                 <td th:text="${item.name}" />
                 <td th:text="${item.questionsCount}" />
                 <td>
                     <input type="checkbox" th:checked = "${item.published}" disabled="" />
                 </td>
+                <td th:text="${item.totalTime}" />
+                <td th:text="${item.passScore}" />
                 <td><a th:href="@{'/exam/' + ${item.id} + '.html'}" th:text="@{'http://addExam.com/exam/' + ${item.id} + '.html'}" /></td>
-                <td><a class="btn btn-primary btn-small" th:href="@{'/exam/' + ${item.id} + '/edit.html'}">Edit</a></td>
+
             </tr>
             </tbody>
         </table>
-        <div>
-            <a class="btn btn-primary btn-large" href="/exam/new.html">Add Exam</a>
-        </div>
 
         <!--exam list block -->
         <div class="page-header">
-            <h1>Groups</h1>
+            <h2>Your groups </h2>
         </div>
 
         <table class="table table-bordered table-striped table-hover">
@@ -57,24 +57,20 @@
                 <th>#</th>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Edit</th>
-                <th>Remove</th>
+                <th> </th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item : ${groups}">
-                <td th:text="${item.id}" />
+            <tr th:each="item, stat : ${groups}">
+                <td th:text="${stat.index + 1}" />
                 <td th:text="${item.name}" />
                 <td th:text="${item.description}" />
-                <td><a class="btn btn-primary btn-small" th:href="@{'/group/' + ${item.id} + '/edit.html'}">Edit</a></td>
-                <td><a class="btn btn-primary btn-small">Remove</a></td>
+                <td><a class="btn btn-primary btn-small" th:href="@{'/group/' + ${item.id} + '/view.html'}">View Details</a></td>
             </tr>
             </tbody>
         </table>
-        <div>
-            <a class="btn btn-primary btn-large" href="/group/new.html">Add Group</a>
-        </div>
     </section>
+    <br/>
     <!-- footer div -->
     <body layout:include="fragments/footer :: footerFragment" th:remove="tag"></body>
 </div>

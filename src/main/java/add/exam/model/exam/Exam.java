@@ -52,25 +52,20 @@ public class Exam
     @Setter
     private ExamAccessType access = ExamAccessType.PUBLIC;
 
-    @Column(name = "totalTime")
+    @Column(name = "total_time")
     @Getter
     @Setter
     private Integer totalTime;
-
-    @Column(nullable = false, name = "random_order")
-    @Getter
-    @Setter
-    private Boolean randomOrder = true;
 
     @Column(nullable = false)
     @Getter
     @Setter
     private Boolean published = false;
 
-    @Column(nullable = false, name="show_answers")
     @Getter
     @Setter
-    private Boolean showAnswers = false;
+    @OneToOne (cascade = CascadeType.ALL)
+    private ExamSettings settings;
 
     @Getter
     @Setter

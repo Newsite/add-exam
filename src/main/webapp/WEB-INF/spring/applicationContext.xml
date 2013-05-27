@@ -18,7 +18,7 @@
     <!-- DataSource -->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="driverClass" value="${connection.driver}"/>
-        <property name="jdbcUrl" value="${connection.url}"/>
+        <property name="jdbcUrl" value="${connection.url}?characterEncoding=UTF-8"/>
         <property name="user" value="${connection.user}"/>
         <property name="password" value="${connection.password}"/>
     </bean>
@@ -65,6 +65,28 @@
     <context:component-scan base-package="add.exam">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
     </context:component-scan>
-    
+
+    <!-- Configure the multipart resolver -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- one of the properties available; the maximum file size in bytes -->
+        <property name="maxUploadSize" value="100000"/>
+    </bean>
+
+    <!-- mail sender -->
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+        <property name="host" value="${email.host}" />
+        <property name="port" value="${email.port}" />
+        <property name="username" value="${email.username}" />
+        <property name="password" value="${email.password}" />
+        <property name="javaMailProperties">
+            <props>
+                <prop key="mail.transport.protocol">smtp</prop>
+                <prop key="mail.smtp.auth">true</prop>
+                <prop key="mail.smtp.starttls.enable">true</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- include security -->
     <import resource="security-context.xml" />
 </beans>

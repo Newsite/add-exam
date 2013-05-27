@@ -48,5 +48,5 @@
         <error-code>404</error-code>
         <location>/thymeleaf/info/404.html</location>
     </error-page>
-        -->
+
 </web-app>

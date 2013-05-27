@@ -14,7 +14,7 @@
 
     <section id="view">
         <div class="page-header">
-            <h1> </h1>
+            <h1>Result</h1>
         </div>
         <div class="row">
             <h3 th:text="${result.exam.name}" />
@@ -22,13 +22,15 @@
                 <p><strong>You have failed exam!</strong></p>
                 <p><strong>Passing Score:</strong><span th:text="${result.exam.passScore}" /></p>
                 <p><strong>Your Score:</strong><span th:text="${result.resultScore}" /></p>
+                <p><strong>Time: </strong><span th:text="${time}" /></p>
             </div>
             <div class="alert alert-success" th:if="${passed}">
                 <p><strong>Congratulations! You have passed exam!</strong></p>
-                <p><strong>Passing Score: </strong><span th:text="${result.exam.passScore}" /></p>
-                <p><strong>Your Score: </strong><span th:text="${result.resultScore}" /></p>
+                <p><strong>Passing Score: </strong> <span th:text="${result.exam.passScore}" /></p>
+                <p><strong>Your Score: </strong> <span th:text="${result.resultScore}" /></p>
+                <p><strong>Time: </strong> <span th:text="${time}" /></p>
             </div>
-            <div>
+            <div th:if="${result.exam.settings.showAnswers}">
                 <a class="btn btn-primary btn-large" th:href="@{'/attempt/' + ${result.id} + '/review/1.html'}">View correct answers</a>
             </div>
         </div>

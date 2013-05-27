@@ -1,6 +1,6 @@
 package add.exam.exam.services;
 
-import add.exam.common.repository.CommonRepository;
+import add.exam.common.repositories.CommonRepository;
 import add.exam.exam.repositories.ExamRepository;
 import add.exam.exceptions.ResourceNotFoundException;
 import add.exam.model.exam.Exam;
@@ -9,6 +9,7 @@ import add.exam.model.exam.ExamQuestionAnswer;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -97,7 +98,7 @@ public class ExamService
             return true;
         }
         Long activeAttemptsNumber = getActiveAttemptsNumber(exam.getId());
-        return activeAttemptsNumber > 0 ? true : false;
+        return activeAttemptsNumber > 0;
     }
 
     public Exam getExam(Integer id, Integer userId){
@@ -113,4 +114,13 @@ public class ExamService
         return examRepository.getTeacherExams(pattern, userId);
     }
 
+    public List<Exam> getTeacherExamsWithAttempts(Integer userId)
+    {
+        return examRepository.getTeacherExamsWithAttempts(userId);
+    }
+
+    public List<Exam> getStudentExams(Integer studentId)
+    {
+        return examRepository.getStudentExams(studentId);
+    }
 }

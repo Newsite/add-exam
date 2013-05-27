@@ -1,0 +1,19 @@
+<!-- template which will return rows with teacher exam report information,
+model attributes ${exam}, ${averageScore}, ${averageTime}, ${bestScore}, ${bestStudent} should be defined -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<tr th:each="item, stat : ${exam.attempts}">
+    <td th:text="${stat.index +1}"/>
+    <td th:text="@{ ${item.user.firstName} + ' ' + ${item.user.lastName}}" />
+    <td th:if="${item.resultScore >= item.exam.passScore}">Passed</td>
+    <td th:if="${item.exam.passScore > item.resultScore}">Failed</td>
+    <td th:text="${item.resultScore}" />
+    <td th:text="@{${item.totalTime} + ' sec'}"/>
+    <td th:text="${item.startTime}" />
+    <td><a class="btn btn-primary btn-small" th:href="@{'/attempt/' + ${item.id} + '.html'}">View</a></td>
+</tr>
+<input type="hidden" id="averageScore" th:value="${averageScore}"/>
+<input type="hidden" id="averageTime" th:value="${averageTime}"/>
+<input type="hidden" id="bestScore" th:value="${bestScore}"/>
+<input type="hidden" id="bestStudent" th:value="${bestStudent}"/>
+</body></html>

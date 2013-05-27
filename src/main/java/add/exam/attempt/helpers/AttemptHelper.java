@@ -2,7 +2,7 @@ package add.exam.attempt.helpers;
 
 import add.exam.attempt.forms.AttemptQuestionForm;
 import add.exam.attempt.model.UserAnswer;
-import add.exam.common.services.CommonService;
+import add.exam.common.services.DateService;
 import add.exam.model.attempt.Attempt;
 import add.exam.model.attempt.AttemptQuestion;
 import add.exam.model.exam.ExamQuestionType;
@@ -39,6 +39,7 @@ public class AttemptHelper
         }else{
             model.addAttribute(PASSED, true);
         }
+        model.addAttribute(TIME, DateService.getTimeString(attempt.getTotalTime()));
     }
 
     public void viewQuestion(AttemptQuestionForm form, Attempt attempt, AttemptQuestion question, Model model){
@@ -97,7 +98,7 @@ public class AttemptHelper
 
     private void addTimeAttribute(Attempt attempt, Model model){
         if ( attempt.getExam().getTotalTime() != null ){
-            Long time = CommonService.getTimeLeftInSeconds(new Date(), attempt.getStartTime(), attempt.getExam().getTotalTime());
+            Long time = DateService.getTimeLeftInSeconds(new Date(), attempt.getStartTime(), attempt.getExam().getTotalTime());
             model.addAttribute(TIME, time);
         }
     }

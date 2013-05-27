@@ -1,29 +1,28 @@
--- fix saving user profile and decoder to show user password
--- implement exam edit support security
+-- add possibility to add image for exam questions
+-- add view group details for students
+-- fix postgres utf-8 encoding
+-- implement exam/group edit support security
 -- implement exam view support security
--- show add answer when there are 8answers and 1 is removed
--- fix question editor to show html
--- fix clear button on edit group page(it is disabled sometimes)
--- post project on github
--- implement aop logging
+-- fix logger
 -- implement static home page
 -- add proper content to prices page
--- buy domain name (addexam.com)
+-- add company name to user data, add pollsCount to userAccount
+-- add common information about users on login page, change button
+-- register new addexam@gmail.com mail address
 -- implement paypal flow
--- and students dashboard
--- add reports flow
+-- handle uploading big sized files
+-- add user guide
+-- add admin reports page
 -- add admin dashboard
--- add common information about users on login page
--- implement write to support page
+-- work with page metadata
 -- add javadocs and additional logging
-
 
 schedulers
 -- that will each 30 minutes finish timed out exams
 -- that will nightly remove attempt question for not registered users
+-- that will nightly disable expired teachers
 -- weekly will remove attempt questions for all users
--- that will daily sent notification in 1 month, 1week and 1 day the accout will be expired
+-- that will daily sent notification in 1 month, 1week and 1 day that the account will be expired
 
 emails
--- that will send login/password after registration
 -- that will sent

@@ -1,0 +1,17 @@
+<!-- template which will return rows with student attempts report information on student reports page,
+model attributes ${attempts}, ${averageScore}, ${averageTime} should be defined -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<tr th:each="item, stat : ${attempts}">
+    <td th:text="${stat.index +1}"/>
+    <td th:text="${item.exam.name}" />
+    <td th:if="${item.resultScore >= item.exam.passScore}">Passed</td>
+    <td th:if="${item.exam.passScore > item.resultScore}">Failed</td>
+    <td th:text="${item.resultScore}" />
+    <td th:text="@{${item.totalTime} + ' sec'}"/>
+    <td th:text="${item.startTime}" />
+    <td><a class="btn btn-primary btn-small" th:href="@{'/attempt/' + ${item.id} + '.html'}">Detailed Report</a></td>
+</tr>
+<input type="hidden" id="averageScore" th:value="${averageScore}"/>
+<input type="hidden" id="averageTime" th:value="${averageTime}"/>
+</body></html>

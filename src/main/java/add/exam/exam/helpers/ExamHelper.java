@@ -16,17 +16,18 @@ public class ExamHelper
     private static final String ACCESS_TYPES = "accessTypes";
     private static final String QUESTIONS = "questions";
     private static final String NOT_COMPLETED_MESSAGE = "notCompletedMsg";
-    private static final String NOT_ENOUGH_COMPLETED_QUESTION_ERROR_MSG = "Number of completed question should be not less than number of exam questions!";
     private static final String IS_COMPLETED_EXAM = "isCompletedExam" ;
     private static final String CAN_TAKE_EXAM = "canTakeExam";
     private static final String TAKE_EXAM_ERROR = "takeExamError";
     private static final String SHOW_UNPUBLISH_EXAM_BUTTON = "showUnPublishExamButton";
     private static final String EDIT_EXAM_ERROR = "editExamError";
-    private static final String SOMEONE_TAKES_EXAM_AT_THE_MOMENT_ERROR_MSG = "Someone takes exam at the moment. Please wait.";
+    private static final String SETTINGS = "settings";
 
     //error messages
     private static final String NOT_PUBLISHED_EXAM_ERROR_MSG = "Exam is not published by teacher.";
     private static final String EXAM_IS_PUBLISHED_ERROR_MSG = "Exam is published. You can not edit published exams.";
+    private static final String SOMEONE_TAKES_EXAM_AT_THE_MOMENT_ERROR_MSG = "Someone takes exam at the moment. Please wait.";
+    private static final String NOT_ENOUGH_COMPLETED_QUESTION_ERROR_MSG = "Number of completed question should be not less than number of exam questions!";
 
     public void addExamAndTypesToModel(Exam exam, Model model){
         addExamToModel(exam, model);
@@ -36,6 +37,7 @@ public class ExamHelper
     public void addEditExamDataToModel(Exam exam, List<ExamQuestion> questions, boolean isExamCompleted, Model model){
         addExamAndTypesToModel(exam, model);
         addCompletedExamAttributes(isExamCompleted, model);
+        model.addAttribute(SETTINGS, exam.getSettings());
         model.addAttribute(QUESTIONS, questions);
     }
 

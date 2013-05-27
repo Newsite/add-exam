@@ -5,6 +5,7 @@ import add.exam.common.services.CommonService;
 import add.exam.exam.services.ExamService;
 import add.exam.model.exam.Exam;
 import add.exam.model.exam.ExamQuestion;
+import add.exam.model.exam.ExamSettings;
 import add.exam.model.user.User;
 import add.exam.user.services.LoginService;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -85,8 +86,15 @@ public class ExamController
     public String saveExam(@ModelAttribute Exam exam){
         User user = userService.getUser();
         exam.setUser(user);
+        exam.setSettings(new ExamSettings());
         examService.save(exam);
         return String.format(REDIRECT_TO_EDIT_EXAM_URL, exam.getId());
+    }
+
+    @RequestMapping(value = "/settings/save", method = RequestMethod.POST)
+    public String saveExamSettings(@ModelAttribute ExamSettings settings){
+        commonService.update(settings);
+        return AJAX_SUCCESS_MESSAGE_TEMPLATE;
     }
 
     @RequestMapping(value = "/{id}/unpublish", method = RequestMethod.POST)

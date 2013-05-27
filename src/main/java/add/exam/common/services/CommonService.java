@@ -1,7 +1,6 @@
 package add.exam.common.services;
 
-import add.exam.common.repository.CommonRepository;
-import add.exam.model.exam.Exam;
+import add.exam.common.repositories.CommonRepository;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -13,10 +12,6 @@ import java.util.Random;
 @Service
 public class CommonService
 {
-    private static final Integer MILLISECONDS_IN_MINUTE = 60000;
-    private static final Integer MILLISECONDS_IN_SECOND = 1000;
-
-
     @Inject
     private CommonRepository repository;
 
@@ -49,13 +44,5 @@ public class CommonService
             size--;
         }
         return subList;
-    }
-
-    public static long getTimeLeftInSeconds(Date currentTime, Date deadlineTime){
-        return (deadlineTime.getTime() - currentTime.getTime()) / MILLISECONDS_IN_SECOND;
-    }
-
-    public static long getTimeLeftInSeconds(Date currentTime, Date startTime, Integer minutes){
-        return (startTime.getTime() + minutes * MILLISECONDS_IN_MINUTE - currentTime.getTime()) / MILLISECONDS_IN_SECOND;
     }
 }

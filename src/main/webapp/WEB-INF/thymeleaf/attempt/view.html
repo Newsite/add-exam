@@ -25,8 +25,9 @@
             </ul>
             <div class="span10 offset1">
                 <h2 th:text="${attempt.exam.name}" />
+
                 <!-- timer -->
-                <body layout:include="fragments/timer :: timerFragment" />
+                <body layout:include="fragments/timer :: timerFragment" th:remove="tag" />
 
                 <div class="control-group">
                     <div class="controls">
@@ -39,7 +40,7 @@
                 </div>
                 <h3 th:text="'Question #' + ${attempt.currentQuestionNumber + 1} + ' of ' + ${attempt.exam.questionsCount}" />
                 <h5 th:utext="${form.attemptQuestion.question.body}" />
-                <form id="answerForm" method="post" th:object="${form}" th:action="@{'/attempt/'+ ${attemptId}+ '/answer.html'}">
+                <form id="answerForm" method="post" th:object="${form}">
                     <fieldset>
                         <div class="control-group" th:if="${MULTI_CHOICE}" th:each="item, stat : *{answers}">
                             <div class="controls">

@@ -75,6 +75,10 @@ public class UserController
      */
     @RequestMapping(method = RequestMethod.GET, value="/register")
     public String showRegisterForm(Model model){
+        User authenticatedUser = service.getUser();
+        if (authenticatedUser != null){
+            return REDIRECT_TO_PROFILE_FORM;
+        }
         helper.addProfileAttributes(new User(), REGISTER_USER_URL, model);
         return PROFILE_FORM_TEMPLATE;
     }
@@ -99,7 +103,7 @@ public class UserController
             helper.addRegisterFormError(model, USERNAME_ALREADY_EXIST_ERROR_MSG);
             userCanBeSaved = false;
         }
-        if (service.existEmail(user.getEmail())){
+        if (service.existEmail(user.getEmail(), user.getRole(), null)){
             helper.addRegisterFormError(model, EMAIL_ALREADY_EXIST_ERROR_MSG);
             userCanBeSaved = false;
         }
@@ -133,27 +137,29 @@ public class UserController
      * saves user profile form
      * @param model
      *          page modal
+     * @param user
+     *          user data
      * @return
      *      profile form
      */
     @RequestMapping(value = "/profile", method = RequestMethod.POST)
-    public String saveProfile(Model model){
-        User user = service.getUser();
-        if (user == null){
+    public String saveProfile(Model model, User user){
+        User authenticatedUser = service.getUser();
+        if (authenticatedUser == null){
             return REDIRECT_TO_LOGIN_FORM;
         }
         boolean userCanBeSaved = true;
-        if (service.existUsername(user.getUsername())){
-            helper.addRegisterFormError(model, USERNAME_ALREADY_EXIST_ERROR_MSG);
-            userCanBeSaved = false;
-        }
-        if (service.existEmail(user.getEmail())){
+        if (service.existEmail(user.getEmail(), authenticatedUser.getRole(), authenticatedUser.getId())){
             helper.addRegisterFormError(model, EMAIL_ALREADY_EXIST_ERROR_MSG);
             userCanBeSaved = false;
+            helper.addProfileAttributes(user, SAVE_PROFILE_URL, model);
         }
-        helper.addProfileAttributes(user, SAVE_PROFILE_URL, model);
+        //save profile
         if (userCanBeSaved){
-            service.create(user);
+            service.update(user, authenticatedUser);
+            helper.addProfileSavedAttr(model);
+            service.sendProfileChangedEmail(authenticatedUser);
+            helper.addProfileAttributes(authenticatedUser, SAVE_PROFILE_URL, model);
         }
         return PROFILE_FORM_TEMPLATE;
     }

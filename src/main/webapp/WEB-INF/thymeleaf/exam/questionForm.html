@@ -3,11 +3,6 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head>
     <div layout:include="fragments/header :: headerFragment" th:remove="tag"/>
-
-    <!--text editor styles-->
-    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-text-editor.css}" />
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet" />
-
     <meta charset="utf-8"/>
     <title>Question info</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -25,20 +20,24 @@
                     <!-- question body block -->
                     <div class="control-group">
                         <p><strong>Question body*</strong></p>
-                        <div id="questionBodyToolbar" class="btn-toolbar" data-role="editor-toolbar" data-target="#questionBodyEditor">
-                            <div layout:include="fragments/textEditor :: textEditor" th:remove="tag" />
-                        </div>
-                        <div id="questionBodyEditor" class="editor" th:utext="${question.body}" />
                         <input id="questionId" type="hidden" th:field="*{id}" />
-                        <div class="controls">
-                            <input type="hidden" id="question-body" th:field="*{body}" required="true"/>
+                        <textarea style="width: 95%;" id="question-body" th:field="*{body}" required="true" rows="7"/>
+                        <a href="/math-symbols.html">How to add special math symbol ?</a>
+                    </div>
+
+                    <!-- image upload -->
+                    <div class="fileupload fileupload-new" data-provides="fileupload">
+                        <div class="fileupload-preview thumbnail" style="width: 300px; height: 200px;"></div>
+                        <div>
+                            <span class="btn btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" /></span>
+                            <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
                         </div>
                     </div>
                     <!-- explanation block -->
                     <div class="control-group" th:if="${showExplanationTextarea}">
-                        <p> <strong>Explanation</strong></p>
+                        <p><strong>Explanation</strong></p>
                         <div>
-                            <textarea id="explanation" style="width:95%;" class="editor" th:field="*{explanation}" rows="5"/>
+                            <textarea id="explanation" style="width:95%;" th:field="*{explanation}" rows="5"/>
                         </div>
                     </div>
                     <div class="control-group">
@@ -91,8 +90,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item : ${answers}" th:id="@{'answerRow-' + ${item.id}}">
-                <td th:text="${item.id}" />
+            <tr th:each="item, stat : ${answers}" th:id="@{'answerRow-' + ${item.id}}">
+                <td th:text="${stat.index + 1}" />
                 <td th:text="${item.body}" />
                 <td>
                     <input type="checkbox" th:checked = "${item.correct}" disabled="true" />
@@ -106,8 +105,8 @@
         <div>
             <p>You are not able to add more than 8 answers !</p>
         </div>
-        <div th:if="${showAddAnswerButton}">
-            <button class="btn btn-primary btn-large" onclick="showEditAnswerModal()">Add answer</button>
+        <div id="addAnswerButtonDiv">
+            <button th:if="${showAddAnswerButton}" class="btn btn-primary btn-large" onclick="showEditAnswerModal()">Add answer</button>
         </div>
     </section>
 
@@ -138,15 +137,8 @@
                     <!-- answer body block -->
                     <div class="control-group">
                         <p>Body</p>
-                        <div class="btn-toolbar" data-role="editor-toolbar" data-target="#answerBodyEditor">
-                            <div layout:include="fragments/textEditor :: textEditor" th:remove="tag" />
-                        </div>
-
-                        <div id="answerBodyEditor" class="editor" contenteditable="true"></div>
                         <input type="hidden" id="answer-id" th:field="*{id}"/>
-                        <div class="controls">
-                            <input type="hidden" th:field="*{body}" id="answer-body" required="true"/>
-                        </div>
+                        <textarea th:field="*{body}" style="width:95%;" id="answer-body" required="true" rows="5"/>
                     </div>
                     <div class="control-group">
                         <div class="controls">
@@ -172,17 +164,6 @@
 <script th:src="@{/js/bootstrap/jqBootstrapValidation.js}" />
 <script>
     $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
-</script>
-
-<!-- text editors initialization-->
-<script th:src="@{/js/bootstrap/bootstrap-editor.js}" />
-<script src="http://twitter.github.com/bootstrap/assets/js/google-code-prettify/prettify.js"></script>
-<script src="https://mindmup.s3.amazonaws.com/lib/jquery.hotkeys.js"></script>
-<script>
-    $(function () {
-        $('#questionBodyEditor').wysiwyg().cleanHtml();
-        $('#answerBodyEditor').wysiwyg();
-    } );
 </script>
 
 <script th:src="@{/js/custom/exam.js}" />

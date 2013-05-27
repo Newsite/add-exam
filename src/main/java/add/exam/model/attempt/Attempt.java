@@ -36,10 +36,11 @@ public class Attempt
     @Setter
     private Date startTime;
 
+    //time for taking exam in seconds
     @Column(name = "total_time")
     @Getter
     @Setter
-    private Date totalTime;
+    private Long totalTime;
 
     @Getter
     @Setter

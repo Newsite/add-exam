@@ -14,6 +14,10 @@ public class UserHelper
     private static final String USER = "user";
     private static final String ROLES = "roles";
     private static final String URL = "url";
+    private static final String PROFILE_SAVED = "profileSaved";
+
+    //messages
+    private static final String PROFILE_SAVED_MESSAGE = "Your profile information was saved";
 
     public void addLoginFormError(Model model){
         model.addAttribute(LOGIN_ERROR, true);
@@ -27,5 +31,10 @@ public class UserHelper
         model.addAttribute(USER, user);
         model.addAttribute(URL, url);
         model.addAttribute(ROLES, UserRole.getUserRoles());
+    }
+
+    public void addProfileSavedAttr(Model model)
+    {
+        model.addAttribute(PROFILE_SAVED, PROFILE_SAVED_MESSAGE);
     }
 }

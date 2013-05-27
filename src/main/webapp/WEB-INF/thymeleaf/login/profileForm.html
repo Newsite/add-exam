@@ -22,7 +22,11 @@
                     <div class="alert alert-error" th:if="${registerError}">
                         <a class="close" data-dismiss="alert">x</a> <span th:text="${registerError}"/>
                     </div>
+                    <div class="alert alert-success" th:if="${profileSaved}">
+                        <a class="close" data-dismiss="alert">x</a> <span th:text="${profileSaved}"/>
+                    </div>
                     <div class="control-group">
+                        <input type="hidden" th:field="*{id}" />
                         <!-- First Name -->
                         <label class="control-label" for="firstName">First Name</label>
                         <div class="controls">

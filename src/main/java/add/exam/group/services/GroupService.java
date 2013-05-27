@@ -1,6 +1,6 @@
 package add.exam.group.services;
 
-import add.exam.common.repository.CommonRepository;
+import add.exam.common.repositories.CommonRepository;
 import add.exam.exceptions.ResourceNotFoundException;
 import add.exam.group.repositories.GroupRepository;
 import add.exam.model.group.Group;
@@ -41,5 +41,10 @@ public class GroupService
             return;
         }
         commonRepository.create(group);
+    }
+
+    public List<Group> getStudentGroups(Integer userId)
+    {
+        return groupRepository.getStudentGroups(userId);
     }
 }

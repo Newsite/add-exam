@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="utf-8"/>
+    <title>Exam report</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="edit exam information"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment"/>
+<div class="container">
+
+    <section id="tables">
+        <div class="page-header">
+            <h1>Exam report</h1>
+        </div>
+
+        <!-- date inputs block -->
+        <div>
+            <div id="dateFrom" class="input-append date span4" data-date-format="dd-mm-yyyy" data-date="">
+                <input id="dateFromInput"  class="span2" type="text" readonly="" size="16"/>
+                <span class="add-on">
+                    <i class="icon-calendar"></i>
+                </span>
+            </div>
+            <div id="dateTo" class="input-append date span4" data-date-format="dd-mm-yyyy" data-date="">
+                <input id="dateToInput" class="span2" type="text" readonly="" size="16"/>
+                <span class="add-on">
+                    <i class="icon-calendar"></i>
+                </span>
+            </div>
+            <div>
+                <button class="btn btn-primary btn-large" onclick="teacherExamReport();">Show report</button>
+            </div>
+            <div>
+                <p> Select date period and press "Show report"</p>
+            </div>
+        </div>
+        <!-- exam information block -->
+        <div>
+            <h5 th:text="${exam.name}"/>
+            <p><b>Description: </b><span th:text="${exam.description}"/></p>
+        </div>
+        <!-- exam id hidden input -->
+        <input id="examIdInput" type="hidden" th:value="${exam.id}"/>
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Student Name</th>
+                <th>Result</th>
+                <th>Score</th>
+                <th>Time</th>
+                <th>Date</th>
+                <th> </th>
+            </tr>
+            </thead>
+            <tbody id="examReportTableBody">
+            <tr th:each="item, stat : ${exam.attempts}">
+                <td th:text="${stat.index +1}"/>
+                <td th:text="@{ ${item.user.firstName} + ' ' + ${item.user.lastName}}" />
+                <td th:if="${item.resultScore >= item.exam.passScore}">Passed</td>
+                <td th:if="${item.exam.passScore > item.resultScore}">Failed</td>
+                <td th:text="${item.resultScore}" />
+                <td th:text="@{${item.totalTime} + ' sec'}"/>
+                <td th:text="${item.startTime}" />
+                <td><a class="btn btn-primary btn-small" th:href="@{'/attempt/' + ${item.id} + '.html'}">View</a></td>
+            </tr>
+            </tbody>
+        </table>
+        <div id="totalStatsDiv">
+            <div th:if="${averageScore}">
+                <p><b>Best Score: </b><span th:text="${bestScore}"/></p>
+                <p><b>Best student: </b><span th:text="${bestStudent}"/></p>
+                <br/>
+                <p><b>Average Score: </b><span th:text="${averageScore}"/></p>
+                <p><b>Average Time: </b><span th:text="${averageTime}"/></p>
+            </div>
+        </div>
+    </section>
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"/>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment"/>
+<script th:src="@{/js/bootstrap/bootstrap-datepicker.js}" />
+<script th:src="@{/js/custom/reports.js}" />
+<script>
+    $(function () {
+        $('#dateFrom').datepicker();
+        $('#dateTo').datepicker();
+    })
+</script>
+</body>
+</html>

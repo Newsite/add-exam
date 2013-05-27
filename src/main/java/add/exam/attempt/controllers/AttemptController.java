@@ -8,6 +8,8 @@ import add.exam.exam.controllers.ExamController;
 import add.exam.model.attempt.Attempt;
 import add.exam.model.attempt.AttemptQuestion;
 import add.exam.model.exam.Exam;
+import add.exam.model.user.User;
+import add.exam.user.services.LoginService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -37,16 +39,23 @@ public class AttemptController
     private CommonService commonService;
 
     @Inject
+    private LoginService userService;
+
+    @Inject
     private AttemptHelper helper;
 
     @RequestMapping(value = REQUEST_MAPPING_NEW_ATTEMPT, method = RequestMethod.GET)
     public String newAttempt(@PathVariable ("exam_id") Integer examId){
+        User user = userService.getUser();
         Exam exam = commonService.get(Exam.class, examId);
         if(!exam.getPublished()){
             return String.format(ExamController.REDIRECT_TO_EXAM_VIEW_URL, exam.getId());
         }
         Attempt attempt = new Attempt();
         attempt.setExam(exam);
+        if (user != null){
+            attempt.setUser(user);
+        }
         List<AttemptQuestion> questions = attemptService.attachAttemptQuestions(attempt);
         attempt.setQuestions(questions);
         attemptService.create(attempt);

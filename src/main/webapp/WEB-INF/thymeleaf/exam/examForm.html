@@ -13,96 +13,153 @@
 <div class="container">
     <section id="forms">
         <div class="row">
-            <form method="post" class="form-horizontal well" th:object="${exam}" th:action="@{/exam/save.html}">
-                <fieldset>
-                    <legend>Edit Exam information</legend>
-                    <div class="control-group">
-                        <label class="control-label" for="exam-name">Exam name</label>
-                        <div class="controls">
-                            <input type="hidden" th:field="*{id}" />
-                            <input type="text" class="input-xlarge" id="exam-name" th:field="*{name}" required="true"/>
-                        </div>
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a data-toggle="tab" href="#examTab">Exam</a>
+                </li>
+                <li th:if="${exam.settings}">
+                    <a data-toggle="tab" href="#settingsTab">Settings</a>
+                </li>
+                <li th:unless="${exam.settings}" class="disabled">
+                    <a data-toggle="tab" href="#settingsTab">Settings</a>
+                </li>
+            </ul>
+            <div class="tabbable">
+                <div class="tab-content">
+                    <div id="examTab" class="tab-pane active">
+                        <form method="post" class="form-horizontal well" th:object="${exam}" th:action="@{/exam/save.html}">
+                            <fieldset>
+                                <legend>Exam information</legend>
+                                <div class="control-group">
+                                    <label class="control-label" for="exam-name">Exam name</label>
+                                    <div class="controls">
+                                        <input type="hidden" th:field="*{id}" />
+                                        <input type="text" class="input-xlarge" id="exam-name" th:field="*{name}" required="true"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="description">Description</label>
+                                    <div class="controls">
+                                        <textarea class="input-xlarge" style="width:95%;" id="description" rows="6"  th:field="*{description}"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="questions-count">Number of questions</label>
+                                    <div class="controls">
+                                        <input type="number" class="input-xlarge" min="1" id="questions-count" required="true" th:field="*{questionsCount}"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="pass-score">Passing Score</label>
+                                    <div class="controls">
+                                        <input type="number" class="input-xlarge" max="100" min="0" id="pass-score" required="true" th:field="*{passScore}"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="total-time">Time for passing exam(in minutes)</label>
+                                    <div class="controls">
+                                        <input type="number" class="input-xlarge" min="1" id="total-time" th:field="*{totalTime}" required="true"/>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="access-type">Select visibility</label>
+                                    <div class="controls">
+                                        <select id="access-type" th:field="*{access}">
+                                            <option th:value="${accessTypes[0]}" selected = "true">All</option>
+                                            <option th:value="${accessTypes[1]}">Only addExam users</option>
+                                            <option th:value="${accessTypes[2]}">Only invited users</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-group warning" th:if="${exam.id}">
+                                    <label class="control-label" for="published">Publish Exam?</label>
+                                    <!-- disabled publish checkbox-->
+                                    <div class="controls" th:if="${notCompletedMsg}">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="published" th:field = "*{published}" disabled="" />
+                                        </label>
+                                    </div>
+                                    <!--enabled publish checkbox -->
+                                    <div class="controls" th:if="${isCompletedExam}">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="published" th:field = "*{published}"/>
+                                            <p>You wouldn't we able to edit exam information, when it is published or when someone takes attempt.</p>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="warning-alert-div">
+                                    <div class="alert alert-error" th:if="${notCompletedMsg}" >
+                                        <p>Exam is not completed and could not be published.</p>
+                                        <strong><p th:text="${notCompletedMsg}" /></strong>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <a type="reset" class="btn" href="/dashboard.html">Close</a>
+                                </div>
+                            </fieldset>
+                        </form>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="description">Description</label>
-                        <div class="controls">
-                            <textarea class="input-xlarge" id="description" rows="6"  th:field="*{description}"/>
-                        </div>
+                    <!-- exam tab end-->
+                    <div id="settingsTab" class="tab-pane" th:if="${exam.settings}">
+                        <form id="settingsForm" class="form-horizontal well" th:object="${settings}">
+                            <fieldset>
+                                <legend>Exam settings</legend>
+                                <div id="settingsAlertsDiv" />
+                                <div class="control-group">
+                                    <label class="control-label" for="randomOrder">Random order</label>
+                                    <div class="controls">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="randomOrder" th:field = "*{randomOrder}" />
+                                            If checked questions will appear in random order
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="showAnswers">Show answers</label>
+                                    <div class="controls">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="showAnswers" th:field = "*{showAnswers}" />
+                                            If checked user will be able to review correct answers after the completion of the exam
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="sendEmailToTeacher">Send email to teacher</label>
+                                    <div class="controls">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="sendEmailToTeacher" th:field = "*{sendEmailToTeacher}" />
+                                            If checked teacher will receive email with results after the completion of the exam
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="sendEmailToStudent">Send email to student</label>
+                                    <div class="controls">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="sendEmailToStudent" th:field = "*{sendEmailToStudent}" />
+                                            If checked student will receive email with results after the completion of the exam
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label" for="showAttemptRank">Show Rank</label>
+                                    <div class="controls">
+                                        <label class="checkbox">
+                                            <input type="checkbox" id="showAttemptRank" th:field = "*{showAttemptRank}" />
+                                            If checked student will see his rank
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                    <a type="reset" class="btn" href="/dashboard.html">Close</a>
+                                </div>
+                            </fieldset>
+                        </form>
                     </div>
-                    <div class="control-group">
-                        <label class="control-label" for="questions-count">Number of questions</label>
-                        <div class="controls">
-                            <input type="number" class="input-xlarge" min="1" id="questions-count" required="true" th:field="*{questionsCount}"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="pass-score">Passing Score</label>
-                        <div class="controls">
-                            <input type="number" class="input-xlarge" max="100" min="0" id="pass-score" required="true" th:field="*{passScore}"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="total-time">Time for passing exam(in minutes)</label>
-                        <div class="controls">
-                            <input type="number" class="input-xlarge" min="0" id="total-time" th:field="*{totalTime}" required="true"/>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="access-type">Select visibility</label>
-                        <div class="controls">
-                            <select id="access-type" th:field="*{access}">
-                                <option th:value="${accessTypes[0]}" selected = "true">All</option>
-                                <option th:value="${accessTypes[1]}">Only addExam users</option>
-                                <option th:value="${accessTypes[2]}">Only invited users</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="randomOrder">Random order</label>
-                        <div class="controls">
-                            <label class="checkbox">
-                                <input type="checkbox" id="randomOrder" th:field = "*{randomOrder}" />
-                                If checked questions will appear in random order
-                            </label>
-                        </div>
-                    </div>
-                    <div class="control-group">
-                        <label class="control-label" for="showAnswers">Show answers</label>
-                        <div class="controls">
-                            <label class="checkbox">
-                                <input type="checkbox" id="showAnswers" th:field = "*{showAnswers}" />
-                                If checked user will be able to review correct answers after taking exam
-                            </label>
-                        </div>
-                    </div>
-                    <div class="control-group warning" th:if="${exam.id}">
-                        <label class="control-label" for="published">Publish Exam?</label>
-                        <!-- disabled publish checkbox-->
-                        <div class="controls" th:if="${notCompletedMsg}">
-                            <label class="checkbox">
-                                <input type="checkbox" id="published" th:field = "*{published}" disabled="" />
-                            </label>
-                        </div>
-                        <!--enabled publish checkbox -->
-                        <div class="controls" th:if="${isCompletedExam}">
-                            <label class="checkbox">
-                                <input type="checkbox" id="published" th:field = "*{published}"/>
-                                <p>You wouldn't we able to edit exam information, when it is published or when someone takes attempt.</p>
-                            </label>
-                        </div>
-                    </div>
-                    <div id="warning-alert-div">
-                        <div class="alert alert-error" th:if="${notCompletedMsg}" >
-                            <p>Exam is not completed and could not be published.</p>
-                            <strong><p th:text="${notCompletedMsg}" /></strong>
-                        </div>
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">Save</button>
-                        <a type="reset" class="btn" href="/dashboard.html">Close</a>
-                    </div>
-                </fieldset>
-            </form>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -112,7 +169,7 @@
             <h1>Questions</h1>
         </div>
 
-        <table class="table table-bordered table-striped table-hover" th:if="${exam.questions}">
+        <table id="questionsTable" class="table table-bordered table-striped table-hover" th:if="${exam.questions}">
             <thead>
             <tr>
                 <th>#</th>
@@ -123,8 +180,8 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="item : ${questions}" th:id="@{'questionRow-' + ${item.id}}" >
-                <td th:text="${item.id}" />
+            <tr th:each="item, stat : ${questions}" th:id="@{'questionRow-' + ${item.id}}" >
+                <td th:text="${stat.index +1}" />
                 <td th:text="${item.body}" />
                 <td>
                     <input type="checkbox" th:checked = "${item.completed}" disabled="true" />
@@ -160,10 +217,21 @@
 <!-- scripts -->
 <body layout:include="fragments/scripts :: scriptsFragment"/>
 <script th:src="@{/js/bootstrap/jqBootstrapValidation.js}" />
-<script>
-    $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
-</script>
-
 <script th:src="@{/js/custom/exam.js}" />
+<script th:src="@{/js/jquery/jquery.form.js}" />
+<script>
+    $(function () {
+        //enable form validation
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+        //configures save settings ajax form submit
+        $("#settingsForm").ajaxForm(
+                {url: '/exam/settings/save.html', type: 'post',
+                    success: function(data){
+                        showSuccessSaveSettingsMessage();
+                    }
+                }
+        );
+    } );
+</script>
 </body>
 </html>

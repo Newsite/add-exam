@@ -1,6 +1,5 @@
 package add.exam.model.user;
 
-
 import add.exam.model.attempt.Attempt;
 import lombok.Getter;
 import lombok.Setter;
@@ -41,25 +40,20 @@ public class User
     @Setter
     private String username;
 
+    @Column(nullable = false, name = "encoded_password")
+    @Getter
+    @Setter
+    private String encodedPassword;
+
     @Column(nullable = false)
     @Getter
     @Setter
     private String password;
 
-    @Column(name="account_expired")
-    @Getter
-    @Setter
-    private Date accountExpired;
-
     @Column(name="register_date")
     @Getter
     @Setter
     private Date registerDate;
-
-    @Column(nullable = false)
-    @Getter
-    @Setter
-    private Double balance = 0D;
 
     @Getter
     @Setter
@@ -67,10 +61,20 @@ public class User
     @Enumerated(EnumType.STRING)
     private UserRole role = UserRole.ROLE_STUDENT;
 
+    @Column(nullable = false)
     @Getter
     @Setter
-    @OneToMany (mappedBy = "exam", cascade = CascadeType.ALL)
+    private Boolean enabled = true;
+
+    @Getter
+    @Setter
+    @OneToMany (mappedBy = "user", cascade = CascadeType.ALL)
     private List<Attempt> attempts;
+
+    @Getter
+    @Setter
+    @OneToOne (cascade = CascadeType.ALL)
+    private UserAccount account;
 
     @Override
     public boolean equals(Object obj) {

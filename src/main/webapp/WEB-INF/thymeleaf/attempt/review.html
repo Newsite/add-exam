@@ -56,9 +56,12 @@
                         <strong>Your answer was correct</strong>
                     </div>
                 </div>
-                <div th:if="${question.attempt.exam.showAnswers}" >
+                <div th:if="${showExplanation}" >
                     <h5>Explanation</h5>
-                    <div th:utext="${question.explanation}" />
+                    <div th:text="${question.explanation}" />
+                </div>
+                <div>
+                    <a class="btn btn-danger" th:href="@{'/attempt/' + ${question.attempt.id} +'.html'}">Close</a>
                 </div>
             </div>
         </div>

@@ -7,4 +7,9 @@
         <class-a>add.exam.model.exam.ExamQuestionAnswer</class-a>
         <class-b>add.exam.attempt.model.UserAnswer</class-b>
     </mapping>
+
+    <mapping map-null="false">
+        <class-a>add.exam.model.user.User</class-a>
+        <class-b>add.exam.model.user.User</class-b>
+    </mapping>
 </mappings>

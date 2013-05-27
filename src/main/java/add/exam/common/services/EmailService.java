@@ -1,12 +1,22 @@
 package add.exam.common.services;
 
+import javax.activation.DataHandler;
+import javax.activation.FileDataSource;
 import javax.inject.Inject;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.core.io.InputStreamSource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Properties;
 
@@ -17,20 +27,7 @@ import java.util.Properties;
 @Service
 public class EmailService
 {
-    //properties names
-    private static final String MAIL_SMTP_HOST = "mail.smtp.host";
-    private static final String MAIL_SMTP_SOCKETFACTORY_PORT = "mail.smtp.socketFactory.port";
-    private static final String MAIL_SMTP_SOCKETFACTORY_CLASS = "mail.smtp.socketFactory.class";
-    private static final String MAIL_SMTP_AUTH = "mail.smtp.auth";
-    private static final String MAIL_SMTP_PORT = "mail.smtp.port";
-
-    //properties values
-    private static final String MAIL_SMTP_AUTH_VALUE = "true";
-    private static final Integer MAIL_SMTP_SOCKETFACTORY_PORT_VALUE = 465;
-    private static final String MAIL_SMTP_SOCKETFACTORY_CLASS_VALUE = "javax.net.ssl.SSLSocketFactory";
-    private static final String MAIL_SMTP_HOST_VALUE = "smtp.gmail.com";
-    private static final String MAIL_SMTP_USER_VALUE = "goroshkevych@gmail.com";
-    private static final String MAIL_SMTP_PASSWORD_VALUE = "78911152";
+    public static final String MAIL_SMTP_USER_VALUE = "goroshkevych@gmail.com";
 
     //email templates file names
     private static final String EMAIL_TEMPLATES_FILENAME = "email-templates.properties";
@@ -41,35 +38,14 @@ public class EmailService
     @Inject
     private PropertiesService propertiesService;
 
+    @Inject
+    private JavaMailSender mailSender;
     /**
-     * Send a single email.
+     * Send a single email from addExam
      */
     private void sendEmail( String toEmail, String body, String subject )
     {
-        Properties props = new Properties();
-        props.put(MAIL_SMTP_HOST, MAIL_SMTP_HOST_VALUE);
-        props.put(MAIL_SMTP_SOCKETFACTORY_PORT, MAIL_SMTP_SOCKETFACTORY_PORT_VALUE);
-        props.put(MAIL_SMTP_SOCKETFACTORY_CLASS, MAIL_SMTP_SOCKETFACTORY_CLASS_VALUE);
-        props.put(MAIL_SMTP_AUTH, MAIL_SMTP_AUTH_VALUE);
-        props.put(MAIL_SMTP_PORT, MAIL_SMTP_SOCKETFACTORY_PORT_VALUE);
-
-        Session session = Session.getInstance( props, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication( MAIL_SMTP_USER_VALUE, MAIL_SMTP_PASSWORD_VALUE);
-            }
-        });
-
-        MimeMessage message = new MimeMessage( session );
-        try{
-            message.setFrom( new InternetAddress( MAIL_SMTP_USER_VALUE ) );
-            message.addRecipient( Message.RecipientType.TO, new InternetAddress(toEmail) );
-            message.setSubject( subject );
-            message.setContent( body, "text/html" );
-            Transport.send(message);
-        }
-        catch (MessagingException ex){
-
-        }
+        sendEmail(MAIL_SMTP_USER_VALUE, toEmail, subject, body, null);
     }
 
     public void sendEmail(String toEmail, String emailTemplate, Object[] bodyParameters){
@@ -81,6 +57,50 @@ public class EmailService
     private String getTemplateSubject(String emailTemplate){
         String key = String.format(STRING_PATTERN, emailTemplate, SUBJECT);
         return propertiesService.getProperty(EMAIL_TEMPLATES_FILENAME, key);
+    }
+
+    /**
+     * universal method for sending emails
+     * @param fromEmail
+     *          from email address
+     * @param toEmail
+     *          to email address
+     * @param subject
+     *          email subject
+     * @param body
+     *          email body
+     * @param attachment
+     *          file attachment
+     */
+    public void sendEmail(final String fromEmail, final String toEmail, final String subject, final String body, final CommonsMultipartFile attachment){
+        mailSender.send(new MimeMessagePreparator()
+        {
+            @Override
+            public void prepare(MimeMessage mimeMessage) throws Exception
+            {
+                MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+                messageHelper.setFrom(  new InternetAddress(fromEmail) );
+                messageHelper.setTo( new InternetAddress(toEmail));
+                messageHelper.setSubject(subject);
+                messageHelper.setText( body, true );
+                if (attachment != null){
+                    // determines if there is an upload file, attach it to the e-mail
+                    String attachName = attachment.getOriginalFilename();
+                        if (!attachName.equals("")) {
+
+                            messageHelper.addAttachment(attachName, new InputStreamSource() {
+
+                                @Override
+                                public InputStream getInputStream() throws IOException
+                                {
+                                    return attachment.getInputStream();
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        );
     }
 
 }

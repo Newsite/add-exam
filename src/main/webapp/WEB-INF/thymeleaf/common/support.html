@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="utf-8"/>
+    <title>View exam result</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="write to support"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment"></body>
+<div class="container">
+    <section>
+        <div class="row">
+            <form class="form-horizontal well" action="/support.html" method="POST" enctype="multipart/form-data">
+                <fieldset>
+                    <div id="legend">
+                        <legend>Write to support</legend>
+                    </div>
+                    <div class="alert alert-success" th:if="${emailSend}">
+                        <a class="close" data-dismiss="alert">x</a>
+                        <span>Thanks! Your request was sent to support. You will get answer as fast as possible.</span>
+                    </div>
+                    <div class="control-group">
+                        <!-- E-mail -->
+                        <label class="control-label" for="email">Your email address*</label>
+                        <div class="controls">
+                            <input type="email" id="email" name="email" class="input-xlarge" required="" />
+                            <p class="help-block">Please provide your E-mail</p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <!-- Subject -->
+                        <label class="control-label" for="subject">Topic*</label>
+                        <div class="controls">
+                            <input type="text" id="subject" name="subject" class="input-xlarge" required="" />
+                        </div>
+                    </div>
+                    <div class="control-group" >
+                        <p>Description*</p>
+                        <div>
+                            <textarea id="explanation" style="width:95%;" required="" name="description" rows="5"/>
+                            <p>To expedite your request, please provide as much detail as possible.</p>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <!-- file -->
+                        <label class="control-label" for="file">File</label>
+                        <div class="controls">
+                            <input id="file" type="file" name="file" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn btn-success">Send</button>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </section>
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"/>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment"/>
+<script th:src="@{/js/bootstrap/jqBootstrapValidation.js}" />
+<script>
+    $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
+</script>
+
+</body>
+</html>

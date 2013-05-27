@@ -37,6 +37,8 @@ function removeAnswer(){
         url : url,
         success : function() {
             $(rowId).remove();
+            var html = "<button class='btn btn-primary btn-large' onclick='showEditAnswerModal()'>Add answer</button>";
+            $("#addAnswerButtonDiv").html(html);
             $('#deleteQuestionAnswerModal').modal('hide');
         }
     });
@@ -50,7 +52,6 @@ function showEditAnswerModal(id, body, correct){
         correct = false;
     }
     $('#answer-id').val(id);
-    $('#answerBodyEditor').html(body);
     if(correct == 'true'){
         $('#answerCorrect').prop('checked','checked');
     }else{
@@ -59,31 +60,21 @@ function showEditAnswerModal(id, body, correct){
     $('#editQuestionAnswerModal').modal('show');
 
     //save question body content
-    var body = $("#answerBodyEditor").html();
     $("#answer-body").val(body);
 }
 
 <!-- close answer edit modal -->
 function closeAnswerEditModal(){
-    //set question body
-    var body = $("#question-body").val();
-    $("#questionBodyEditor").html(body);
     $('#editQuestionAnswerModal').modal('hide');
 }
 
 <!-- method for saving exam question answer -->
 function saveAnswer(){
-    var body = $("#answerBodyEditor").html();
-    $("#answer-body").val(body);
     $("#answer-form").submit();
 }
 
 <!-- method for saving question -->
 function saveQuestion(){
-    var body = $("#questionBodyEditor").html();
-    body = body.replace(/&lt;br&gt;/g, "<br/>");
-    body = body.replace("<br>", "<br/>");
-    $("#question-body").val(body);
     $("#answer-question").submit();
 }
 
@@ -102,5 +93,9 @@ function updateStatus(){
 function updatePublishCheckbox(){
     var couldNotBePublished = $('#warning-alert-div').html().length > 0 ;
     $("#published").attr("disabled", couldNotBePublished);
+}
 
+function showSuccessSaveSettingsMessage(){
+    var html = "<div class='alert alert-success' ><a class='close' data-dismiss='alert'>x</a> <span> Exam settings were saved! </span></div>";
+    $("#settingsAlertsDiv").html(html);
 }

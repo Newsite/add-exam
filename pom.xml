@@ -10,6 +10,7 @@
     <packaging>war</packaging>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <org.springframework.version>3.2.0.RELEASE</org.springframework.version>
         <junit-version>4.11</junit-version>
     </properties>
@@ -100,6 +101,25 @@
             <version>1.4.7</version>
         </dependency>
 
+        <!-- aspects -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.7.2</version>
+        </dependency>
+
+        <!-- apache commons file upload -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>1.3.2</version>
+        </dependency>
+
         <!-- Jackson -->
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
@@ -127,6 +147,13 @@
             <artifactId>commons-logging</artifactId>
             <version>1.1.1</version>
             <scope>provided</scope>
+        </dependency>
+
+        <!-- aop libraries-->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.6.11</version>
         </dependency>
 
         <!-- Spring -->
@@ -205,7 +232,6 @@
             <version>3.1.4.RELEASE</version>
         </dependency>
 
-
         <!-- Test -->
         <dependency>
             <groupId>junit</groupId>
@@ -231,7 +257,7 @@
             <version>1.3.170</version>
         </dependency>
 
-
+        <!-- javax repositories -->
         <dependency>
             <groupId>javax.persistence</groupId>
             <artifactId>persistence-api</artifactId>

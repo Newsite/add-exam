@@ -48,7 +48,7 @@ public class ExamQuestionHelper
         model.addAttribute(ANSWER, new ExamQuestionAnswer());
         model.addAttribute(QUESTION, question);
         model.addAttribute(TYPES, ExamQuestionType.getQuestionTypes());
-        if (question.getExam().getShowAnswers()){
+        if (question.getExam().getSettings().getShowAnswers()){
             model.addAttribute(SHOW_EXPLANATION, true);
         }
     }

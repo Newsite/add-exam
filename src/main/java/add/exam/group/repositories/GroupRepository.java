@@ -1,6 +1,6 @@
 package add.exam.group.repositories;
 
-import add.exam.common.repository.CommonRepository;
+import add.exam.common.repositories.CommonRepository;
 import add.exam.model.group.Group;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +15,12 @@ public class GroupRepository
     //queries
     private static final String GET_TEACHER_GROUPS_QUERY = "select g from Group g where user_id = :userId";
     private static final String GET_USER_GROUP_QUERY = "select g from Group g left join fetch g.exams left join fetch g.students where g.id = :groupId and g.user.id = :userId";
+    private static final String GET_STUDENT_GROUPS_NATIVE_QUERY = "select g.* from groups g left join students_in_groups sig on g.id = sig.group_id where sig.student_id = :studentId";
 
     //attributes
     private static final String USER_ID = "userId";
     private static final String GROUP_ID = "groupId";
+    private static final String STUDENT_ID = "studentId";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -42,5 +44,12 @@ public class GroupRepository
             return null;
         }
         return groups.get(0);
+    }
+
+    public List<Group> getStudentGroups(Integer userId)
+    {
+        return entityManager.createNativeQuery(GET_STUDENT_GROUPS_NATIVE_QUERY, Group.class)
+                .setParameter(STUDENT_ID, userId)
+                .getResultList();
     }
 }

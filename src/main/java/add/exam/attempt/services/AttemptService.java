@@ -1,8 +1,9 @@
 package add.exam.attempt.services;
 
 import add.exam.attempt.model.UserAnswer;
-import add.exam.attempt.persistence.AttemptRepository;
+import add.exam.attempt.repositories.AttemptRepository;
 import add.exam.common.services.CommonService;
+import add.exam.common.services.DateService;
 import add.exam.common.services.JSONMapperService;
 import add.exam.exam.services.ExamService;
 import add.exam.model.attempt.Attempt;
@@ -38,7 +39,7 @@ public class AttemptService
 
     public List<AttemptQuestion> attachAttemptQuestions(Attempt attempt){
         List<ExamQuestion> questions = examService.getCompletedExamQuestions(attempt.getExam().getId());
-        if (!attempt.getExam().getRandomOrder()){
+        if (!attempt.getExam().getSettings().getRandomOrder()){
             questions = questions.subList(0, attempt.getExam().getQuestionsCount());
         }else{
             questions = commonService.getRandomSubList(questions,
@@ -105,6 +106,12 @@ public class AttemptService
         }
 
         attempt.setResultScore(correctQuestions * 100 / attempt.getExam().getQuestionsCount());
+        //set attempt totalTime
+        long totalTime = DateService.getTimeRangeInSecond(attempt.getStartTime(), new Date());
+        if (attempt.getExam().getTotalTime() * DateService.SECONDS_IN_MINUTE < totalTime){
+            totalTime = attempt.getExam().getTotalTime() * DateService.SECONDS_IN_MINUTE;
+        }
+        attempt.setTotalTime(totalTime);
         attempt.setCompleted(true);
         commonService.update(attempt);
     }
@@ -153,5 +160,15 @@ public class AttemptService
 
     public AttemptQuestion getCurrentQuestion(Integer attempt, Integer number){
         return getAttemptQuestions(attempt).get(number);
+    }
+
+    public List<Attempt> getUserAttempts(Integer userId)
+    {
+        return attemptRepository.getUserAttempts(userId);
+    }
+
+    public List<Attempt> getExamAttempts(Integer examId, Date dateFrom, Date dateTo)
+    {
+        return attemptRepository.getExamAttempts(examId, dateFrom, dateTo);
     }
 }

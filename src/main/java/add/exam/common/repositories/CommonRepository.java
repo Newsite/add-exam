@@ -1,4 +1,4 @@
-package add.exam.common.repository;
+package add.exam.common.repositories;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,0 +1,14 @@
+<!-- template which will return rows with user exam report information on teacher reports page,
+model attribute ${examsInfo} should be defined -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <tr th:each="item, stat : ${examsInfo}">
+        <td th:text="${stat.index +1}"/>
+        <td th:text="${item.exam.name}" />
+        <td th:text="${item.numberOfAttempts}" />
+        <td th:text="${item.numberOfSuccessAttempts}" />
+        <td th:text="${item.averageScore}" />
+        <td th:text="${item.averageTime}" />
+        <td><a class="btn btn-primary btn-small" th:href="@{'/reports/exam/' + ${item.exam.id} + '.html'}">Detailed Report</a></td>
+    </tr>
+</body></html>
