@@ -5,7 +5,9 @@ import add.exam.exam.services.ExamService;
 import add.exam.group.services.GroupService;
 import add.exam.model.exam.Exam;
 import add.exam.model.group.Group;
+import add.exam.model.poll.Poll;
 import add.exam.model.user.User;
+import add.exam.poll.services.PollService;
 import add.exam.user.services.LoginService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +33,9 @@ public class DashboardController
     private GroupService groupService;
 
     @Inject
+    private PollService pollService;
+
+    @Inject
     private DashboardHelper helper;
 
     //view templates
@@ -52,8 +57,9 @@ public class DashboardController
         User user = userService.getUser();
         List<Exam> exams = examService.getTeacherExams(user.getId());
         List<Group> groups = groupService.getTeacherGroups(user.getId());
+        List<Poll> polls = pollService.getTeacherPolls(user.getId());
         Integer studentsCount = userService.getStudentsCount(user.getId());
-        helper.addTeacherDashboardAttr(exams, groups, studentsCount, model);
+        helper.addTeacherDashboardAttr(exams, polls,  groups, studentsCount, model);
         return DASHBOARD_TEACHER_TEMPLATE;
     }
 

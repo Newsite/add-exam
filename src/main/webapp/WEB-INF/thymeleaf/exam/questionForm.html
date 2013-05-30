@@ -3,6 +3,8 @@
       xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head>
     <div layout:include="fragments/header :: headerFragment" th:remove="tag"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-fileupload.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-fileupload.css}" />
     <meta charset="utf-8"/>
     <title>Question info</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -10,34 +12,49 @@
     <meta name="author" content="Maksym Goroshkevych"/>
 </head>
 <body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
-<body layout:include="fragments/navbar :: navbarFragment"></body>
+<body layout:include="fragments/navbar :: navbarFragment" th:remove="tag"/>
 <div class="container">
     <section id="forms">
         <div class="row">
             <form id="question-form" method="post" class="form-horizontal well" th:object="${question}" th:action="@{'/exam/' + ${question.exam.id} + '/question/save.html'}">
-                <fieldset>
                     <legend>Question information</legend>
                     <!-- question body block -->
                     <div class="control-group">
                         <p><strong>Question body*</strong></p>
                         <input id="questionId" type="hidden" th:field="*{id}" />
-                        <textarea style="width: 95%;" id="question-body" th:field="*{body}" required="true" rows="7"/>
+                        <textarea style="width: 95%;" id="question-body" th:field="*{body}" required="true" rows="5"/>
                         <a href="/math-symbols.html">How to add special math symbol ?</a>
                     </div>
 
                     <!-- image upload -->
+                    <input type="hidden" style="display: none;" id="questionImage" th:field="*{image}" />
                     <div class="fileupload fileupload-new" data-provides="fileupload">
-                        <div class="fileupload-preview thumbnail" style="width: 300px; height: 200px;"></div>
-                        <div>
-                            <span class="btn btn-file"><span class="fileupload-new">Select image</span><span class="fileupload-exists">Change</span><input type="file" /></span>
-                            <a href="#" class="btn fileupload-exists" data-dismiss="fileupload">Remove</a>
+                        <div class="fileupload-new thumbnail" style="width: 200px; height: 150px;">
+                            <img id="defaultPreviewImage" th:src="${question.image}" />
                         </div>
+                        <div id="previewImage" class="fileupload-preview fileupload-exists thumbnail" style="max-width: 200px; max-height: 150px; line-height: 20px; background-color: white;">
+                        </div>
+                        <div>
+                            <span class="btn btn-file">
+                                <span class="fileupload-new">Select image</span>
+                                <span class="fileupload-exists">Change</span>
+                                <input type="file" />
+                            </span>
+                            <a href="#" class="btn fileupload-exists" data-dismiss="fileupload" onclick="$('#defaultPreviewImage').html('');">Remove</a>
+                            <p>You can add image to your question</p>
+                            <p>Image size should be less than 1Mb</p>
+                        </div>
+                    </div>
+                    <div id="image-errors" />
+                    <div class="alert alert-warning">
+                        <strong>Notice!</strong>
+                        Image preview only works in IE10+, FF3.6+, Chrome6.0+ and Opera11.1+. In older browsers and Safari, the filename is shown instead.
                     </div>
                     <!-- explanation block -->
                     <div class="control-group" th:if="${showExplanationTextarea}">
                         <p><strong>Explanation</strong></p>
                         <div>
-                            <textarea id="explanation" style="width:95%;" th:field="*{explanation}" rows="5"/>
+                            <textarea id="explanation" style="width:95%;" th:field="*{explanation}" rows="4"/>
                         </div>
                     </div>
                     <div class="control-group">
@@ -65,10 +82,10 @@
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button class="btn btn-primary" onclick="saveQuestion();">Save</button>
+                        <a class="btn btn-primary" onclick="saveQuestion();">Save</a>
+                        <button id="questionFormSubmitBtn" type="submit" style="display: none;"/>
                         <a class="btn" th:href="@{'/exam/' + ${question.exam.id} + '/edit.html'}" >Close</a>
                     </div>
-                </fieldset>
             </form>
         </div>
     </section>
@@ -132,11 +149,10 @@
             <h3>Answer</h3>
         </div>
         <div class="modal-body">
-            <form class="well" id="answer-form" method="post" th:object="${answer}" th:action="@{'/exam/' + ${question.exam.id} + '/question/' + ${question.id} + '/answer/save.html'}">
+            <form id="answer-form" method="post" th:object="${answer}" th:action="@{'/exam/' + ${question.exam.id} + '/question/' + ${question.id} + '/answer/save.html'}">
                 <fieldset>
                     <!-- answer body block -->
                     <div class="control-group">
-                        <p>Body</p>
                         <input type="hidden" id="answer-id" th:field="*{id}"/>
                         <textarea th:field="*{body}" style="width:95%;" id="answer-body" required="true" rows="5"/>
                     </div>
@@ -156,14 +172,21 @@
     <!-- finish modal popups block> -->
 
     <!-- footer div -->
-    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"></body>
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"/>
 </div>
 <!-- scripts -->
-<body layout:include="fragments/scripts :: scriptsFragment"></body>
+<body layout:include="fragments/scripts :: scriptsFragment" th:remove="tag"/>
+
 <!-- form validation-->
 <script th:src="@{/js/bootstrap/jqBootstrapValidation.js}" />
+
+<!-- file upload-->
+<script th:src="@{/js/bootstrap/bootstrap-fileupload.js}" />
+<script th:src="@{/js/bootstrap/bootstrap-fileupload.min.js}" />
 <script>
-    $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
+    $(function () {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    } );
 </script>
 
 <script th:src="@{/js/custom/exam.js}" />

@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head layout:include="fragments/header :: headerFragment">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-fileupload.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-fileupload.css}" />
     <meta charset="utf-8"/>
-    <title>View exam result</title>
+    <title>Support</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="write to support"/>
     <meta name="author" content="Maksym Goroshkevych"/>
 
 </head>
 <body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
-<body layout:include="fragments/navbar :: navbarFragment"></body>
+<body layout:include="fragments/navbar :: navbarFragment" th:remove="tag" />
 <div class="container">
     <section>
         <div class="row">
@@ -44,12 +46,26 @@
                             <p>To expedite your request, please provide as much detail as possible.</p>
                         </div>
                     </div>
-                    <div class="control-group">
-                        <!-- file -->
-                        <label class="control-label" for="file">File</label>
-                        <div class="controls">
-                            <input id="file" type="file" name="file" />
+                    <!-- file upload -->
+                    <div id="fileUploadDiv" class="fileupload fileupload-new" data-provides="fileupload">
+                        <div class="input-append">
+                            <div class="uneditable-input span3">
+                                <i class="icon-file fileupload-exists"></i>
+                                <span class="fileupload-preview"></span>
+                            </div>
+                            <span class="btn btn-file">
+                                <span class="fileupload-new" onclick="$('#file').click();">Select file</span>
+                                <input id="file" type="file" name="file" style="display:none;"/>
+                            </span>
+                            <a href="#" id="resetFileUploadBtn" class="btn fileupload-exists" data-dismiss="fileupload"
+                                    onclick="$('#fileUploadDiv input').first().remove();">Remove</a>
                         </div>
+                    </div>
+                    <br/>
+                    <div id="image-errors" />
+                    <div class="alert alert-warning">
+                        <strong>Notice!</strong>
+                        File size should be less than 10Mb
                     </div>
                     <div class="control-group">
                         <div class="controls">
@@ -64,9 +80,27 @@
     <body layout:include="fragments/footer :: footerFragment" th:remove="tag"/>
 </div>
 <!-- scripts -->
-<body layout:include="fragments/scripts :: scriptsFragment"/>
+<body layout:include="fragments/scripts :: scriptsFragment" th:remove="tag"/>
+<!-- file upload-->
+<script th:src="@{/js/bootstrap/bootstrap-fileupload.js}" />
+<script th:src="@{/js/bootstrap/bootstrap-fileupload.min.js}" />
+
 <script th:src="@{/js/bootstrap/jqBootstrapValidation.js}" />
 <script>
+    //binds to onchange event of your input field
+    $('#file').bind('change', function() {
+        var  size = 0;
+        try{
+            size = this.files[0].size;
+        }catch(e){}
+        //this.files[0].size gets the size of your file.
+        if (size > 10485759){
+            $("#image-errors").html('<div class="alert alert-error"><a class="close" data-dismiss="alert">x</a> <span>File is too big!</span></div>');
+            $("#resetFileUploadBtn").click();
+
+        }
+
+    });
     $(function () { $("input,select,textarea").not("[type=submit]").jqBootstrapValidation(); } );
 </script>
 

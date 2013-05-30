@@ -1,16 +1,18 @@
--- add possibility to add image for exam questions
+-- fix edit, and delete modals, update statuses and warnings for polls
+-- add vote poll flow
+-- add review poll flow
 -- add view group details for students
 -- fix postgres utf-8 encoding
 -- implement exam/group edit support security
 -- implement exam view support security
+-- fix labels for form mandatory fields
 -- fix logger
 -- implement static home page
 -- add proper content to prices page
--- add company name to user data, add pollsCount to userAccount
+-- add company name to register form
 -- add common information about users on login page, change button
 -- register new addexam@gmail.com mail address
 -- implement paypal flow
--- handle uploading big sized files
 -- add user guide
 -- add admin reports page
 -- add admin dashboard

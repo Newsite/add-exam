@@ -22,6 +22,13 @@ public class ExamQuestion
     @Setter
     private String body;
 
+    @Column
+    @Lob
+    @Getter
+    @Setter
+    private String image;
+
+
     @Column(columnDefinition = "text")
     @Getter
     @Setter

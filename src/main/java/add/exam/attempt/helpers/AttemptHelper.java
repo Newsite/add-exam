@@ -6,6 +6,7 @@ import add.exam.common.services.DateService;
 import add.exam.model.attempt.Attempt;
 import add.exam.model.attempt.AttemptQuestion;
 import add.exam.model.exam.ExamQuestionType;
+import com.google.common.base.Strings;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
 
@@ -31,6 +32,7 @@ public class AttemptHelper
     private static final String FORM = "form";
     private static final String ATTEMPT = "attempt";
     private static final String TIME = "time";
+    private static final String SHOW_IMAGE = "showImage";
 
     public void showAttemptResult(Attempt attempt, Model model){
         model.addAttribute(RESULT, attempt);
@@ -63,6 +65,9 @@ public class AttemptHelper
         model.addAttribute(question.getQuestion().getType().toString(), true);
 
         addTimeAttribute(attempt, model);
+        if (!Strings.isNullOrEmpty(question.getQuestion().getImage())){
+            model.addAttribute(SHOW_IMAGE, true);
+        }
         model.addAttribute(MARKED_URL, String.format("mark/%s.html", question.getId()));
     }
 

@@ -45,22 +45,14 @@ function removeAnswer(){
 }
 
 <!-- shows edit answer modal -->
-function showEditAnswerModal(id, body, correct){
+function showEditAnswerModal(id, body){
     if (id == undefined){
         id = '';
         body = '';
-        correct = false;
     }
     $('#answer-id').val(id);
-    if(correct == 'true'){
-        $('#answerCorrect').prop('checked','checked');
-    }else{
-        $('#answerCorrect').removeAttr('checked');
-    }
-    $('#editQuestionAnswerModal').modal('show');
-
-    //save question body content
     $("#answer-body").val(body);
+    $('#editQuestionAnswerModal').modal('show');
 }
 
 <!-- close answer edit modal -->
@@ -71,40 +63,4 @@ function closeAnswerEditModal(){
 <!-- method for saving exam question answer -->
 function saveAnswer(){
     $("#answer-form").submit();
-}
-
-<!-- method for saving question -->
-function saveQuestion(){
-    var image = $("#previewImage img").attr("src");
-    if (image == "" || image == undefined){
-        image = $("#defaultPreviewImage").attr("src");
-    }
-    if (image.length > 1400000){
-        $("#image-errors").html("<div class='alert alert-error'><a class='close' data-dismiss='alert'>x</a> <span>Image is too big!</span></div>")
-    }else{
-        $("#questionImage").val(image);
-        $("#question-form").submit();
-    }
-}
-
-<!-- method for updating exam, question status -->
-function updateStatus(){
-    $.ajax({
-        type: "POST",
-        url : 'status.html',
-        data:{},
-        success: function (data){
-            $('#warning-alert-div').html(data);
-        }
-    });
-}
-
-function updatePublishCheckbox(){
-    var couldNotBePublished = $('#warning-alert-div').html().length > 0 ;
-    $("#published").attr("disabled", couldNotBePublished);
-}
-
-function showSuccessSaveSettingsMessage(){
-    var html = "<div class='alert alert-success' ><a class='close' data-dismiss='alert'>x</a> <span> Exam settings were saved! </span></div>";
-    $("#settingsAlertsDiv").html(html);
 }

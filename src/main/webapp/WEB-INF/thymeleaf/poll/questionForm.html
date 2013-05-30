@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head>
+    <div layout:include="fragments/header :: headerFragment" th:remove="tag"/>
+    <meta charset="utf-8"/>
+    <title>Question info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="A calm, blue sky."/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment" th:remove="tag"/>
+<div class="container">
+    <section id="forms">
+        <div class="row">
+            <form id="question-form" method="post" class="form-horizontal well" th:object="${question}" th:action="@{'/poll/' + ${question.poll.id} + '/question/save.html'}">
+                <legend>Question information</legend>
+                <!-- question body block -->
+                <div class="control-group">
+                    <p><strong>Question body*</strong></p>
+                    <input id="questionId" type="hidden" th:field="*{id}" />
+                    <textarea style="width: 95%;" id="question-body" th:field="*{body}" required="true" rows="5"/>
+                    <a href="/math-symbols.html">How to add special math symbol ?</a>
+                </div>
+
+                <div id="warning-alert-div">
+                    <div class="alert alert-error" th:if="${notCompletedMsg}">
+                    <p>Question is not completed and could not be published.</p>
+                    <strong><p th:text="${notCompletedMsg}" /></strong>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit">Save</button>
+                    <a class="btn" th:href="@{'/poll/' + ${question.poll.id} + '/edit.html'}" >Close</a>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <!--answers block -->
+    <section id="tables" th:if="${question.id}">
+        <div class="page-header">
+            <h1>Answers</h1>
+        </div>
+
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Body</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item, stat : ${question.answers}" th:id="@{'answerRow-' + ${item.id}}">
+                <td th:text="${stat.index + 1}" />
+                <td th:text="${item.body}" />
+                <td><button class="btn btn-primary btn-small"
+                            th:onclick="'javascript:showEditAnswerModal(\''+ ${item.id} + '\', \''+ ${item.body} + '\');'">Edit</button></td>
+                <td><button class="btn btn-primary btn-small" th:onclick="'javascript:showRemoveAnswerModal(\''+ ${item.id} + '\');'">Delete</button></td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <p>You are not able to add more than 8 answers !</p>
+        </div>
+        <div id="addAnswerButtonDiv">
+            <button th:if="${showAddAnswerButton}" class="btn btn-primary btn-large" onclick="showEditAnswerModal()">Add answer</button>
+        </div>
+    </section>
+
+    <!-- Modal popups block-->
+    <!-- remove answer popup -->
+    <div id="deleteQuestionAnswerModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Confirmation</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this answer ?</p>
+        </div>
+        <input type="hidden" id="answerIdHiddenInput" />
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="removeAnswer();">Yes</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+        </div>
+    </div>
+
+    <!-- edit answer popup-->
+    <div id="editQuestionAnswerModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Answer</h3>
+        </div>
+        <div class="modal-body">
+            <form id="answer-form" method="post" th:object="${answer}" th:action="@{'/poll/' + ${question.poll.id} + '/question/' + ${question.id} + '/answer/save.html'}">
+                <!-- answer body block -->
+                <div class="control-group">
+                    <input type="hidden" id="answer-id" th:field="*{id}"/>
+                    <textarea th:field="*{body}" style="width:95%;" id="answer-body" required="true" rows="5"/>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="saveAnswer()">Save and Close</button>
+            <button class="btn" onclick="closeAnswerEditModal()">Cancel</button>
+        </div>
+    </div>
+    <!-- finish modal popups block> -->
+
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"/>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment" th:remove="tag"/>
+<!-- form validation-->
+<script th:src="@{/js/bootstrap/jqBootstrapValidation.js}" />
+<script>
+    $(function () {
+        $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+    } );
+</script>
+
+<script th:src="@{/js/custom/poll.js}" />
+</body>
+</html>

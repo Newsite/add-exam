@@ -35,6 +35,11 @@ public class User
     @Setter
     private String lastName;
 
+    @Column(name="company_name")
+    @Getter
+    @Setter
+    private String companyName;
+
     @Column(nullable = false)
     @Getter
     @Setter

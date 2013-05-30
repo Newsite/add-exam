@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head layout:include="fragments/header :: headerFragment">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-fileupload.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-fileupload.css}" />
     <meta charset="utf-8"/>
     <title>Edit Exam information</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -9,7 +11,7 @@
 
 </head>
 <body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
-<body layout:include="fragments/navbar :: navbarFragment" />
+<body layout:include="fragments/navbar :: navbarFragment" th:remove="tag"/>
 <div class="container">
     <section id="view">
         <div class="page-header">
@@ -38,7 +40,11 @@
                         </label>
                     </div>
                 </div>
+
                 <h3 th:text="'Question #' + ${attempt.currentQuestionNumber + 1} + ' of ' + ${attempt.exam.questionsCount}" />
+                <div th:if="${showImage}" class="fileupload-preview fileupload-exists thumbnail" style="max-width: 400px; max-height: 300px; line-height: 20px; background-color: white;">
+                    <img style="max-width: 400px; max-height: 300px;" th:src="${form.attemptQuestion.question.image}" />
+                </div>
                 <h5 th:utext="${form.attemptQuestion.question.body}" />
                 <form id="answerForm" method="post" th:object="${form}">
                     <fieldset>

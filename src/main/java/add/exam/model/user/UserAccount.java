@@ -42,6 +42,11 @@ public class UserAccount
     @Setter
     private Integer examsCount = 1;
 
+    @Column(name = "polls_count")
+    @Getter
+    @Setter
+    private Integer pollCount = 1;
+
     @Column(name = "students_count")
     @Getter
     @Setter

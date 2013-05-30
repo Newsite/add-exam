@@ -1,6 +1,7 @@
 package add.exam.common.controllers;
 
 import add.exam.common.services.EmailService;
+import add.exam.exam.controllers.ExamController;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,5 +36,10 @@ public class SupportController
         emailService.sendEmail(email, EmailService.MAIL_SMTP_USER_VALUE, subject, description, file);
         model.addAttribute( "emailSend", true);
         return SUPPORT_FORM_TEMPLATE;
+    }
+
+    @RequestMapping(value = "/checkFile", method = RequestMethod.POST)
+    public String sendEmailToSupport(@RequestParam CommonsMultipartFile file){
+        return ExamController.AJAX_SUCCESS_MESSAGE_TEMPLATE;
     }
 }
