@@ -20,7 +20,8 @@
 
         <security:intercept-url pattern="/reports.html" />
         <security:intercept-url pattern="/reports/exam/**.html" access="ROLE_TEACHER" />
-        <security:intercept-url pattern="/group/**" access="ROLE_TEACHER" />
+        <security:intercept-url pattern="/group/**.html" access="ROLE_STUDENT" />
+        <security:intercept-url pattern="/group/**/**.html" access="ROLE_TEACHER" />
         <security:intercept-url pattern="/search/**" access="ROLE_TEACHER" />
         <security:intercept-url pattern="/attempt/**" access="ROLE_TEACHER, ROLE_STUDENT" />
         <security:form-login login-processing-url="/j_spring_security_check" login-page="/login.html"

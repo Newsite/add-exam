@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head layout:include="fragments/header :: headerFragment">
-    <meta charset="utf-8"/>
-    <title>Edit Exam information</title>
+    <meta charset="ISO-8859-1"/>
+    <title>Edit group information</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="edit exam information"/>
+    <meta name="description" content="edit group information"/>
     <meta name="author" content="Maksym Goroshkevych"/>
 
 </head>
@@ -67,6 +67,33 @@
             <button class="btn btn-primary btn-large" onclick="showAddExamModal();">Add exam</button>
         </div>
 
+        <!-- polls -->
+        <div class="page-header">
+            <h1>Polls</h1>
+        </div>
+
+        <table id="pollsTable" class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+                <th>Poll name</th>
+                <th>Description</th>
+                <th>Edit</th>
+                <th>Remove from group</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${polls}" th:id="@{'pollRow-' + ${item.id}}" >
+                <td th:text="${item.name}" />
+                <td th:text="${item.description}" />
+                <td><a class="btn btn-primary btn-small" th:href="@{'/poll/' + ${item.id} + '/edit.html'}">Edit</a></td>
+                <td><button class="btn btn-primary btn-small" th:onclick="'javascript:showRemovePollModal(\''+ ${item.id} + '\');'">Delete</button></td>
+            </tr>
+            </tbody>
+        </table>
+        <div>
+            <button class="btn btn-primary btn-large" onclick="showAddPollModal();">Add poll</button>
+        </div>
+
         <!-- students -->
         <div class="page-header">
             <h1>Students</h1>
@@ -109,6 +136,20 @@
         </div>
     </div>
 
+    <!-- remove poll from group modal -->
+    <div id="deletePollModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Confirmation</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to remove poll from this group ?</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" onclick="removePoll();">Yes</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">No</button>
+        </div>
+    </div>
+
     <!-- delete student from group modal -->
     <div id="deleteStudentModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-header">
@@ -144,6 +185,26 @@
         </div>
     </div>
 
+    <!-- add poll to group modal -->
+    <div id="addPollModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-header">
+            <h3>Add poll to this group</h3>
+        </div>
+        <div class="modal-body">
+            <div class="control-group" style="height: 125px;">
+                <div class="controls">
+                    <input id="pollSearchInput" type="text" data-items="4" placeholder="select poll.." class="input-xlarge search-query" data-provide="typeahead" />
+                </div>
+                <p>Only students from this group and groups to which poll is added will have possibility to view selected poll.</p>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button id="addPollButton" class="btn btn-primary" disabled="" onclick="addPoll();">Add</button>
+            <button class="btn" onclick="clearPollSearchInput();">Clear</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+        </div>
+    </div>
+
     <!-- add student to group modal -->
     <div id="addStudentModal" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-header">
@@ -166,6 +227,7 @@
     <!-- finish modal popups block> -->
     <div id="hiddenInputs" />
     <input type="hidden" id="examIdHiddenInput" />
+    <input type="hidden" id="pollIdHiddenInput" />
     <input type="hidden" id="studentIdHiddenInput" />
 
     <!-- footer div -->

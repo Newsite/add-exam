@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head layout:include="fragments/header :: headerFragment">
-    <meta charset="utf-8"/>
+    <meta charset="ISO-8859-1"/>
     <title>Exam information</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="edit exam information"/>
@@ -28,7 +28,7 @@
                     <div class="control-group">
                         <input type="hidden" th:field="*{id}" />
                         <!-- First Name -->
-                        <label class="control-label" for="firstName">First Name</label>
+                        <label class="control-label" for="firstName">First Name*</label>
                         <div class="controls">
                             <input type="text" id="firstName" name="firstName" class="input-xlarge" th:field="*{firstName}" required="true" />
                         </div>
@@ -36,15 +36,23 @@
 
                     <div class="control-group">
                         <!-- Last Name -->
-                        <label class="control-label" for="lastName">Last Name</label>
+                        <label class="control-label" for="lastName">Last Name*</label>
                         <div class="controls">
                             <input type="text" id="lastName" name="lastName" class="input-xlarge" th:field="*{lastName}" required="" />
                         </div>
                     </div>
 
+                    <!-- Company name -->
+                    <div class="control-group">
+                        <label class="control-label" for="companyName">Company name</label>
+                        <div class="controls">
+                            <input type="text" id="companyName" name="companyName" class="input-xlarge" th:field="*{companyName}"/>
+                        </div>
+                    </div>
+
                     <div class="control-group">
                         <!-- Username -->
-                        <label class="control-label"  for="username">Username</label>
+                        <label class="control-label"  for="username">Username*</label>
                         <div class="controls" th:unless="${user.id}">
                             <input type="text" id="username" name="username" class="input-xlarge" th:field="*{username}" required="" />
                             <p class="help-block">Username can contain any letters or numbers, without spaces</p>
@@ -56,7 +64,7 @@
 
                     <div class="control-group">
                         <!-- E-mail -->
-                        <label class="control-label" for="email">E-mail</label>
+                        <label class="control-label" for="email">E-mail*</label>
                         <div class="controls">
                             <input type="email" id="email" name="email" class="input-xlarge" th:field="*{email}" required="" />
                             <p class="help-block">Please provide your E-mail</p>
@@ -65,7 +73,7 @@
 
                     <div class="control-group">
                         <!-- Password-->
-                        <label class="control-label" for="password">Password</label>
+                        <label class="control-label" for="password">Password*</label>
                         <div class="controls">
                             <input type="password" id="password" name="password" class="input-xlarge" th:field="*{password}"
                                    minlength ="6" data-validation-minlength-messagerequired="Password should be at least 6 characters" required="" />
@@ -74,7 +82,7 @@
 
                     <div class="control-group">
                         <!-- Password -->
-                        <label class="control-label"  for="password_confirm">Password (Confirm)</label>
+                        <label class="control-label"  for="password_confirm">Password (Confirm)*</label>
                         <div class="controls">
                             <input type="password" id="password_confirm" name="password_confirm" class="input-xlarge"
                                    data-validation-matches-match="password"
@@ -84,7 +92,7 @@
                     </div>
 
                     <div class="control-group" th:unless="${user.id}">
-                        <label class="control-label" for="access-type">Select role</label>
+                        <label class="control-label" for="access-type">Select role*</label>
                         <div class="controls">
                             <select id="access-type" th:field="*{role}">
                                 <option th:value="${roles[0]}">Teacher</option>

@@ -71,4 +71,42 @@ public class PollService
     {
         return pollRepository.getTeacherPolls(userId);
     }
+
+    public List<Poll> getPolls(String pattern, Integer userId)
+    {
+        return pollRepository.getTeacherPolls(pattern, userId);
+    }
+
+    public boolean isAccessAllowed(Integer userId, Integer pollId)
+    {
+       return pollRepository.isAccessAllowed(userId, pollId);
+    }
+
+    public Poll getPollWithQuestions(Integer id)
+    {
+        Poll poll = pollRepository.getPollWithQuestions(id);
+        if (poll == null){
+            throw new ResourceNotFoundException(String.format("Poll with id: %s is not found", id));
+        }
+        return poll;
+    }
+
+    public PollQuestion getPollQuestionWithAnswers(Integer questionId)
+    {
+        PollQuestion question = pollRepository.getPollQuestionWithAnswers(questionId);
+        if (question == null){
+            throw new ResourceNotFoundException(String.format("Poll question with id: %s is not found", questionId));
+        }
+        return question;
+    }
+
+    public List<PollQuestion> getPollQuestionsAndAnswers(Integer pollId)
+    {
+        return pollRepository.getPollQuestionsAndAnswers(pollId);
+    }
+
+    public List<Poll> getStudentPolls(Integer id)
+    {
+        return pollRepository.getStudentPolls(id);
+    }
 }

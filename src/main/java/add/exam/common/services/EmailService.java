@@ -78,7 +78,7 @@ public class EmailService
             @Override
             public void prepare(MimeMessage mimeMessage) throws Exception
             {
-                MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+                MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "ISO-8859-1");
                 messageHelper.setFrom(  new InternetAddress(fromEmail) );
                 messageHelper.setTo( new InternetAddress(toEmail));
                 messageHelper.setSubject(subject);

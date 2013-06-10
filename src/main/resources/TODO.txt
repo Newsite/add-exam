@@ -1,30 +1,22 @@
--- fix edit, and delete modals, update statuses and warnings for polls
--- add vote poll flow
--- add review poll flow
--- add view group details for students
--- fix postgres utf-8 encoding
+-- add paginating 25 per page for exam form, poll form, poll question form, exam question form, student report, teacher report pages
+
 -- implement exam/group edit support security
 -- implement exam view support security
 -- fix labels for form mandatory fields
 -- fix logger
 -- implement static home page
 -- add proper content to prices page
--- add company name to register form
--- add common information about users on login page, change button
 -- register new addexam@gmail.com mail address
--- implement paypal flow
--- add user guide
 -- add admin reports page
 -- add admin dashboard
+-- implement paypal flow
+
+-- add user guide and youtube videos for help
 -- work with page metadata
 -- add javadocs and additional logging
 
-schedulers
--- that will each 30 minutes finish timed out exams
--- that will nightly remove attempt question for not registered users
+schedulers and emails
+-- implement sending emails about attempts results to user and teacher
 -- that will nightly disable expired teachers
--- weekly will remove attempt questions for all users
+-- test scheduler that will remove attempt questions for all users
 -- that will daily sent notification in 1 month, 1week and 1 day that the account will be expired
-
-emails
--- that will sent

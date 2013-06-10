@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="ISO-8859-1"/>
+    <title>Group information</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="edit group information"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment" th:remove="tag"/>
+<div class="container">
+<section id="forms">
+    <div class="row">
+        <h2 th:utext="@{'Group name: ' + ${group.name}}" />
+        <h5 th:utext="@{'Descriptions: ' + ${group.description}}" />
+    </div>
+</section>
+
+<!--tables block -->
+<section id="tables">
+    <!-- exams -->
+    <div class="page-header">
+        <h1>Exams</h1>
+    </div>
+
+    <table id="examsTable" class="table table-bordered table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Exam name</th>
+            <th>Description</th>
+            <th>Number of questions</th>
+            <th>Time</th>
+            <th>Passing Score</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${exams}" th:id="@{'examRow-' + ${item.id}}" >
+            <td th:text="${item.name}" />
+            <td th:utext="${item.description}" />
+            <td th:text="${item.questionsCount}"/>
+            <td th:text="${item.totalTime}" />
+            <td th:text="${item.passScore}" />
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- polls -->
+    <div class="page-header">
+        <h1>Polls</h1>
+    </div>
+
+    <table id="pollsTable" class="table table-bordered table-striped table-hover">
+        <thead>
+        <tr>
+            <th>Poll name</th>
+            <th>Description</th>
+            <th>Closed</th>
+            <th>Link</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${polls}" th:id="@{'pollRow-' + ${item.id}}" >
+            <td th:text="${item.name}" />
+            <td th:utext="${item.description}" />
+            <td>
+                <input type="checkbox" th:checked = "${item.completed}" disabled="" />
+            </td>
+            <td><a th:href="@{'/poll/' + ${item.id} + '.html'}" th:text="@{'http://addExam.com/poll/' + ${item.id} + '.html'}" /></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- students -->
+    <div class="page-header">
+        <h1>Students</h1>
+    </div>
+
+    <table id="studentsTable" class="table table-bordered table-striped table-hover" >
+        <thead>
+        <tr>
+            <th>Student name</th>
+            <th>Student email</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${students}" th:id="@{'studentRow-' + ${item.id}}" >
+            <td th:text="@{${item.firstName} + ' ' + ${item.lastName}}" />
+            <td th:text="${item.email}" />
+        </tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- footer div -->
+<body layout:include="fragments/footer :: footerFragment" th:remove="tag"/>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment" th:remove="tag"/>
+
+</body>
+</html>

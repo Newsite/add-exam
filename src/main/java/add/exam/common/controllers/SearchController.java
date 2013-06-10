@@ -5,7 +5,9 @@ import add.exam.exam.services.ExamService;
 import add.exam.group.services.GroupService;
 import add.exam.model.exam.Exam;
 import add.exam.model.group.Group;
+import add.exam.model.poll.Poll;
 import add.exam.model.user.User;
+import add.exam.poll.services.PollService;
 import add.exam.user.services.LoginService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,6 +35,9 @@ public class SearchController
     private GroupService groupService;
 
     @Inject
+    private PollService pollService;
+
+    @Inject
     private SearchHelper helper;
 
     @RequestMapping(value = "/students", method = RequestMethod.POST)
@@ -52,6 +57,16 @@ public class SearchController
         List<Exam> exams = examService.getExams(pattern, user.getId());
         exams = helper.excludeAddedExams(group.getExams(), exams);
         helper.addExamOptions(exams, model);
+        return SELECT_OPTIONS_TEMPLATE;
+    }
+
+    @RequestMapping(value = "/polls", method = RequestMethod.POST)
+    public String getPolls(@RequestParam Integer groupId, @RequestParam String pattern, Model model){
+        User user = userService.getUser();
+        Group group = groupService.getGroup(groupId, user.getId());
+        List<Poll> polls = pollService.getPolls(pattern, user.getId());
+        polls = helper.excludeAddedPolls(group.getPolls(), polls);
+        helper.addPollOptions(polls, model);
         return SELECT_OPTIONS_TEMPLATE;
     }
 

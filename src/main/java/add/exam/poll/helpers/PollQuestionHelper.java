@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 @Component
 public class PollQuestionHelper
 {
+    private static final Integer ANSWER_COUNT_MAX_LIMIT = 8;
+
     //model attributes
     private static final String QUESTION = "question";
     private static final String ANSWER = "answer";
@@ -17,7 +19,7 @@ public class PollQuestionHelper
     public void addQuestionToModel(PollQuestion question, Model model){
         model.addAttribute(QUESTION, question);
         model.addAttribute(ANSWER, new PollQuestionAnswer());
-        if (question.getAnswers().size() < 8){
+        if (question.getAnswers() == null || question.getAnswers().size() < ANSWER_COUNT_MAX_LIMIT){
             model.addAttribute(SHOW_ADD_ANSWER_BUTTON, true);
         }
         addQuestionStatusToModel(question, model);

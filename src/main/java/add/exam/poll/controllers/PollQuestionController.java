@@ -1,11 +1,11 @@
 package add.exam.poll.controllers;
 
 import add.exam.common.services.CommonService;
-import add.exam.exam.controllers.ExamController;
 import add.exam.model.poll.Poll;
 import add.exam.model.poll.PollQuestion;
 import add.exam.model.poll.PollQuestionAnswer;
 import add.exam.model.user.User;
+import add.exam.poll.helpers.PollHelper;
 import add.exam.poll.helpers.PollQuestionHelper;
 import add.exam.poll.services.PollService;
 import add.exam.user.services.LoginService;
@@ -26,7 +26,8 @@ public class PollQuestionController
 
 
     private static final String QUESTION_FORM_TEMPLATE = "poll/questionForm";
-    private static final String QUESTION_STATUS_TEMPLATE = "common/ajax-templates/questionStatus";
+    private static final String DELETE_POLL_QUESTION_AJAX_TEMPLATE = "common/ajax-templates/deletePollQuestion";
+    private static final String DELETE_POLL_ANSWER_AJAX_TEMPLATE = "common/ajax-templates/deletePollAnswer";
 
     @Inject
     private PollService pollService;
@@ -39,6 +40,9 @@ public class PollQuestionController
 
     @Inject
     private PollQuestionHelper helper;
+
+    @Inject
+    private PollHelper pollHelper;
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newPollQuestion(Model model, @PathVariable("poll_id") Integer pollId){
@@ -61,8 +65,6 @@ public class PollQuestionController
             return String.format(PollController.REDIRECT_TO_POLL_RESULT_URL, pollId);
         }
         helper.addQuestionToModel(question, model);
-        question.setCompleted(question.getAnswers().size() > 1);
-        pollService.save(question);
         return QUESTION_FORM_TEMPLATE;
     }
 
@@ -76,9 +78,12 @@ public class PollQuestionController
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public String delete(@PathVariable ("id") Integer questionId){
+    public String delete(@PathVariable ("id") Integer questionId, @PathVariable("poll_id") Integer pollId, Model model){
+        User user = userService.getUser();
         commonService.delete(PollQuestion.class, questionId);
-        return ExamController.AJAX_SUCCESS_MESSAGE_TEMPLATE;
+        Poll poll = pollService.getPollWithQuestions(pollId, user.getId());
+        pollHelper.addNotCompletedPollAttr(poll, model);
+        return DELETE_POLL_QUESTION_AJAX_TEMPLATE;
     }
 
 
@@ -88,24 +93,30 @@ public class PollQuestionController
                        @ModelAttribute PollQuestionAnswer answer){
         User user = userService.getUser();
         PollQuestion question = pollService.getPollQuestionWithAnswers(questionId, pollId, user.getId());
+        if (answer.getId() == null){
+            question.setCompleted(question.getAnswers().size() > 0);
+        }else{
+            question.setCompleted(question.getAnswers().size() > 1);
+        }
+        pollService.save(question);
         answer.setQuestion(question);
         pollService.save(answer);
         return String.format(PollQuestionController.REDIRECT_TO_EDIT_QUESTION_URL, pollId, questionId);
     }
 
-    @RequestMapping(value = "/{question_id}/answer/{id}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{question_id}/answer/{answerId}", method = RequestMethod.DELETE)
     public String delete(@PathVariable("poll_id") Integer pollId,
                         @PathVariable ("question_id") Integer questionId,
-                        @PathVariable ("id") Integer answerId, Model model){
+                        @PathVariable Integer answerId, Model model){
         User user = userService.getUser();
         PollQuestion question = pollService.getPollQuestionWithAnswers(questionId, pollId, user.getId());
+        PollQuestionAnswer answer = commonService.get(PollQuestionAnswer.class, answerId);
+        question.setCompleted(question.getAnswers().size() > 2);
+        question.getAnswers().remove(answer);
+        pollService.save(question);
         commonService.delete(PollQuestionAnswer.class, answerId);
-        if (question.getCompleted() && question.getAnswers().size() < 2){
-            question.setCompleted(false);
-            pollService.save(question);
-        }
         helper.addQuestionToModel(question, model);
-        return ExamController.AJAX_SUCCESS_MESSAGE_TEMPLATE;
+        return DELETE_POLL_ANSWER_AJAX_TEMPLATE;
     }
 
 }

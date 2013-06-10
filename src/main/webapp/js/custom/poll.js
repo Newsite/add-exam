@@ -1,7 +1,7 @@
 <!-- shows remove question modal -->
 function showRemoveQuestionModal(id){
     $('#questionIdHiddenInput').val(id);
-    $('#deleteExamQuestionModal').modal('show');
+    $('#deletePollQuestionModal').modal('show');
 }
 
 <!-- method for removing exam question-->
@@ -12,11 +12,20 @@ function removeQuestion(){
     $.ajax({
         type: "delete",
         url : url,
-        success : function() {
-            updateStatus();
-            $('#deleteExamQuestionModal').modal('hide');
+        success : function(data) {
+            data = data.substring(data.indexOf('<body>') + 6);
+            data = data.replace("</body></html>", "");
+            $("#publishedPollDiv").html(data);
             $(rowId).remove();
-            updatePublishCheckbox();
+            $('#publishBtnSpan').html('');
+            if (data.length < 10){
+                html = "<a class='btn btn-danger' onclick=\"$('#publishPollModal').modal('show')\">Publish</a>"
+                $('#publishBtnSpan').html(html);
+            }
+
+            var html = "<a class='btn btn-primary btn-large' href='question/new.html' >Add question</a>";
+            $("#addQuestionButtonDiv").html(html);
+            $('#deletePollQuestionModal').modal('hide');
         }
     });
 }
@@ -35,7 +44,10 @@ function removeAnswer(){
     $.ajax({
         type: "delete",
         url : url,
-        success : function() {
+        success : function(data) {
+            data = data.substring(data.indexOf('<body>') + 6);
+            data = data.replace("</body></html>", "");
+            $("#warning-alert-div").html(data);
             $(rowId).remove();
             var html = "<button class='btn btn-primary btn-large' onclick='showEditAnswerModal()'>Add answer</button>";
             $("#addAnswerButtonDiv").html(html);

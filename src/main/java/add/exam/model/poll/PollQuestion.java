@@ -1,7 +1,5 @@
 package add.exam.model.poll;
 
-import add.exam.model.exam.Exam;
-import add.exam.model.exam.ExamQuestionAnswer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,6 +31,11 @@ public class PollQuestion
     @Getter
     @Setter
     private Boolean completed = false;
+
+    @Column(nullable = false)
+    @Getter
+    @Setter
+    private Integer voted = 0;
 
     @Getter
     @Setter

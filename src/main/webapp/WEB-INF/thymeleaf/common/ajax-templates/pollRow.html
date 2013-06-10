@@ -1,0 +1,11 @@
+<!-- template which will return row with poll information,
+model attribute ${poll} should be defined -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <tr th:id="@{'pollRow-' + ${poll.id}}" >
+        <td th:text="${poll.name}" />
+        <td th:text="${poll.description}" />
+        <td><a class="btn btn-primary btn-small" th:href="@{'/poll/' + ${poll.id} + '/edit.html'}">Edit</a></td>
+        <td><button class="btn btn-primary btn-small" th:onclick="'javascript:showRemovePollModal(\''+ ${poll.id} + '\');'">Delete</button></td>
+    </tr>
+</body></html>

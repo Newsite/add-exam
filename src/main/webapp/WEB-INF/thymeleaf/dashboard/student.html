@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
 <head layout:include="fragments/header :: headerFragment">
-    <meta charset="utf-8"/>
+    <meta charset="ISO-8859-1"/>
     <title>Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta name="description" content="dashboard"/>
@@ -46,7 +46,36 @@
             </tbody>
         </table>
 
-        <!--exam list block -->
+        <!--poll list block -->
+        <div class="page-header">
+            <h2>Polls joined to your groups</h2>
+        </div>
+
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Voting closed</th>
+                <th>Link</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item,stat : ${polls}">
+                <td th:text="${stat.index + 1}" />
+                <td th:utext="${item.name}" />
+                <td th:utext="${item.description}" />
+                <td>
+                    <input type="checkbox" th:checked = "${item.completed}" disabled="" />
+                </td>
+                <td><a th:href="@{'/poll/' + ${item.id} + '.html'}" th:text="@{'http://addExam.com/poll/' + ${item.id} + '.html'}" /></td>
+
+            </tr>
+            </tbody>
+        </table>
+
+        <!--group list block -->
         <div class="page-header">
             <h2>Your groups </h2>
         </div>
@@ -64,8 +93,8 @@
             <tr th:each="item, stat : ${groups}">
                 <td th:text="${stat.index + 1}" />
                 <td th:text="${item.name}" />
-                <td th:text="${item.description}" />
-                <td><a class="btn btn-primary btn-small" th:href="@{'/group/' + ${item.id} + '/view.html'}">View Details</a></td>
+                <td th:utext="${item.description}" />
+                <td><a class="btn btn-primary btn-small" th:href="@{'/group/' + ${item.id} + '.html'}">View Details</a></td>
             </tr>
             </tbody>
         </table>

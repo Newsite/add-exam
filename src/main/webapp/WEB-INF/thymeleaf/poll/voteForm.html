@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-fileupload.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-fileupload.css}" />
+    <meta charset="ISO-8859-1"/>
+    <title>Exam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="exam"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment" th:remove="tag"/>
+<div class="container">
+    <section id="view">
+        <div class="page-header">
+            <h1> </h1>
+        </div>
+        <div class="row">
+            <div class="span10 offset1">
+                <h2 th:text="${vote.poll.name}" />
+
+                <h3 th:text="'Question #' + ${vote.currentQuestionNumber + 1} + ' of ' + ${questionsCount}" />
+                <h5 th:utext="${question.body}" />
+                <form id="answerForm" method="post" th:object="${voteForm}">
+                    <input type="hidden" th:field="*{questionId}"/>
+                    <div class="control-group" th:each="item, stat : ${question.answers}">
+                        <div class="controls">
+                            <label class="radio">
+                                <input type="radio" th:value="${item.id}" th:field="*{answerId}"/>
+                                <div th:utext="${item.body}" />
+                            </label>
+                        </div>
+                    </div>
+                    <!-- buttons block-->
+                    <div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"/>
+</div>
+
+
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment" th:remove="tag" />
+<script th:src="@{/js/jquery/jquery.form.js}" />
+</body>
+</html>

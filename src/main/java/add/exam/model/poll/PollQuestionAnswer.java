@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table (name="poll_question_answers")
@@ -31,4 +32,17 @@ public class PollQuestionAnswer
     @Setter
     private Integer voted = 0;
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != this.getClass()){
+            return false;
+        }
+        PollQuestionAnswer answer = (PollQuestionAnswer) obj;
+        return Objects.equals(answer.getId(), id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
 }

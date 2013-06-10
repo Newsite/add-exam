@@ -1,6 +1,5 @@
 package add.exam.model.poll;
 
-import add.exam.model.exam.Exam;
 import add.exam.model.user.User;
 import lombok.Getter;
 import lombok.Setter;

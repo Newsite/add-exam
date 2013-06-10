@@ -1,14 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ISO-8859-1"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
       http://www.springframework.org/schema/beans/spring-beans.xsd
       http://www.springframework.org/schema/tx
       http://www.springframework.org/schema/tx/spring-tx.xsd
       http://www.springframework.org/schema/context
-      http://www.springframework.org/schema/context/spring-context.xsd">
+      http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd">
 
     <!-- list of properties files -->
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -18,7 +19,7 @@
     <!-- DataSource -->
     <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="driverClass" value="${connection.driver}"/>
-        <property name="jdbcUrl" value="${connection.url}?characterEncoding=UTF-8"/>
+        <property name="jdbcUrl" value="${connection.url}?characterEncoding=ISO-8859-1"/>
         <property name="user" value="${connection.user}"/>
         <property name="password" value="${connection.password}"/>
     </bean>
@@ -31,8 +32,8 @@
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="hibernate.connection.Useunicode">true</prop>
-                <prop key="hibernate.connection.charSet">UTF-8</prop>
-                <prop key="connection.characterEncoding">UTF-8</prop>
+                <prop key="hibernate.connection.charSet">ISO-8859-1</prop>
+                <prop key="connection.characterEncoding">ISO-8859-1</prop>
             </props>
         </property>
 
@@ -86,6 +87,11 @@
             </props>
         </property>
     </bean>
+
+    <!-- scheduler -->
+    <task:executor id="executor" pool-size="10"/>
+    <task:scheduler id="scheduler" pool-size="10"/>
+    <task:annotation-driven scheduler="scheduler" executor="executor"/>
 
     <!-- include security -->
     <import resource="security-context.xml" />

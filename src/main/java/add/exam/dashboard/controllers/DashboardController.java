@@ -71,7 +71,8 @@ public class DashboardController
         User user = userService.getUser();
         List<Group> groups = groupService.getStudentGroups(user.getId());
         List<Exam> exams = examService.getStudentExams(user.getId());
-        helper.addStudentDashboardAttr(exams, groups, model);
+        List<Poll> polls = pollService.getStudentPolls(user.getId());
+        helper.addStudentDashboardAttr(exams, groups, polls, model);
         return DASHBOARD_STUDENT_TEMPLATE;
     }
 }

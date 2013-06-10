@@ -1,6 +1,7 @@
 package add.exam.common.helpers;
 
 import add.exam.model.exam.Exam;
+import add.exam.model.poll.Poll;
 import add.exam.model.user.User;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -22,6 +23,20 @@ public class SearchHelper
     public void addExamOptions(List<Exam> exams, Model model)
     {
         model.addAttribute(OPTIONS, getExamNames(exams));
+    }
+
+    public void addPollOptions(List<Poll> polls, Model model)
+    {
+        model.addAttribute(OPTIONS, getPollNames(polls));
+    }
+
+    private Map<Integer, String> getPollNames(List<Poll> polls)
+    {
+        Map<Integer, String> result = new HashMap<Integer, String>();
+        for (Poll poll: polls){
+            result.put(poll.getId(), poll.getName());
+        }
+        return result;
     }
 
     private Map<Integer, String> getStudentNames(List<User> users){
@@ -57,6 +72,17 @@ public class SearchHelper
         for(User student: students){
             if(!groupStudents.contains(student)){
                 result.add(student);
+            }
+        }
+        return result;
+    }
+
+    public List<Poll> excludeAddedPolls(Set<Poll> groupPolls, List<Poll> userPolls)
+    {
+        List<Poll> result = new ArrayList<Poll>();
+        for (Poll poll: userPolls){
+            if (!groupPolls.contains(poll)){
+                result.add(poll);
             }
         }
         return result;

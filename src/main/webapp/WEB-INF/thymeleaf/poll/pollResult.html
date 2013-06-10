@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<head layout:include="fragments/header :: headerFragment">
+    <meta charset="ISO-8859-1"/>
+    <title>Poll results</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="description" content="poll results"/>
+    <meta name="author" content="Maksym Goroshkevych"/>
+
+</head>
+<body class="preview" id="top" data-spy="scroll" data-target=".subnav" data-offset="80">
+<body layout:include="fragments/navbar :: navbarFragment" th:remove="tag"/>
+<div class="container">
+
+    <section id="view">
+        <div class="page-header">
+            <h1>Poll Results:</h1>
+        </div>
+        <div class="row">
+            <h2 th:text="${poll.name}" />
+            <div th:each="item, stat : ${poll.questions}">
+                <div>
+                    <h3 th:text="'Question #' + ${stat.index + 1}" />
+                    <h5 th:utext="${item.body}" />
+                    <h5 th:text="@{'Voted: ' + ${item.voted}}" />
+                    <div th:each="answer, cursor: ${item.answers}" th:if="${item.voted > 0}">
+                        <strong th:utext="${answer.body}"/><span class="pull-right" th:text="@{'Voted: ' + ${answer.voted}}"/>
+                        <div th:if="${cursor.index == 0 or cursor.index == 4}" class="progress progress-danger active">
+                            <div class="bar" th:style="@{'width: ' + ${answer.voted / item.voted}  + '%'}"/>
+                        </div>
+                        <div th:if="${cursor.index == 1 or cursor.index == 5}" class="progress progress-info active">
+                            <div class="bar" th:style="@{'width: ' + ${answer.voted / item.voted}  + '%'}"/>
+                        </div>
+                        <div th:if="${cursor.index == 2 or cursor.index == 6}" class="progress progress-success active">
+                            <div class="bar" th:style="@{'width: ' + ${answer.voted / item.voted}  + '%'}"/>
+                        </div>
+                        <div th:if="${cursor.index == 3 or cursor.index == 7}" class="progress progress-warning active">
+                            <div class="bar" th:style="@{'width: ' + ${answer.voted / item.voted}  + '%'}"/>
+                        </div>
+                    </div>
+                    <div th:if="${item.voted == 0}">
+                        <div class="alert alert-warning">
+                            <p>No one has answered this question.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <a class="btn btn-primary btn-large" href="/dashboard.html">Return to Dashboard</a>
+            </div>
+        </div>
+    </section>
+    <!-- footer div -->
+    <body layout:include="fragments/footer :: footerFragment" th:remove="tag"/>
+</div>
+<!-- scripts -->
+<body layout:include="fragments/scripts :: scriptsFragment" th:remove="tag"/>
+</body>
+</html>

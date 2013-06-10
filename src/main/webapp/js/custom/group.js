@@ -31,6 +31,39 @@ $('#examSearchInput').typeahead({
     }
 });
 
+<!-- configuration for poll autocomplete -->
+$('#pollSearchInput').typeahead({
+    source: function (query, process) {
+        map = {};
+        groupId = $("#groupId").val();
+        return $.ajax({
+            type: "post",
+            url: "/search/polls.html",
+            data:({
+                groupId: groupId,
+                pattern: query
+            }),
+            success: function(data){
+                var list = [];
+                $("#hiddenInputs").html(data);
+                $("#hiddenInputs option").each(function(){
+                    map[$(this).text()] = $(this).val();
+                    list.push($(this).text());
+                });
+                $("#hiddenInputs").html('');
+                return process(list);
+            }
+
+        });
+    },
+    updater: function (obj) {
+        $("#pollSearchInput").attr('disabled', true);
+        $("#addPollButton").attr('disabled', false);
+        $("#pollIdHiddenInput").val(map[obj]);
+        return obj;
+    }
+});
+
 <!-- configuration for student autocomplete -->
 $('#studentSearchInput').typeahead({
     source: function (query, process) {
@@ -93,6 +126,35 @@ function addExam(){
     });
 }
 
+function showAddPollModal(){
+    clearPollSearchInput();
+    $("#addPollModal").modal('show');
+}
+
+function clearPollSearchInput(){
+    $("#pollSearchInput").attr('disabled', false);
+    $("#addPollButton").attr('disabled', true);
+    $("#pollSearchInput").val('');
+}
+
+function addPoll(){
+    var pollId = $("#pollIdHiddenInput").val();
+    var groupId = $("#groupId").val();
+    $.ajax({
+        type: "post",
+        url: "/group/" + groupId + "/add/poll.html",
+        data:({
+            pollId: pollId
+        }),
+        success: function(data){
+            data = data.substring(data.indexOf('<body>') + 6);
+            data = data.replace("</body></html>", "");
+            $('#pollsTable tr:last').after(data);
+            $("#addPollModal").modal('hide');
+        }
+    });
+}
+
 function showRemoveExamModal(id){
     $('#examIdHiddenInput').val(id);
     $("#deleteExamModal").modal('show');
@@ -110,6 +172,27 @@ function removeExam(){
         success : function() {
             $('#deleteExamModal').modal('hide');
             $(rowId).remove();
+        }
+    });
+}
+
+function showRemovePollModal(id){
+    $('#pollIdHiddenInput').val(id);
+    $("#deletePollModal").modal('show');
+}
+
+<!-- method for removing exam from group-->
+function removePoll(){
+    var pollId = $('#pollIdHiddenInput').val();
+    var groupId = $("#groupId").val();
+    var url = '/group/' + groupId + '/poll/'+ pollId + '.html';
+    var rowId = '#pollRow-' + pollId;
+    $.ajax({
+        type: "delete",
+        url : url,
+        success : function() {
+            $(rowId).remove();
+            $('#deletePollModal').modal('hide');
         }
     });
 }

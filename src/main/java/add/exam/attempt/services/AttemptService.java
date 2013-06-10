@@ -171,4 +171,15 @@ public class AttemptService
     {
         return attemptRepository.getExamAttempts(examId, dateFrom, dateTo);
     }
+
+    public List<Attempt> getNotCompletedAttempts()
+    {
+        return attemptRepository.getNotCompletedAttempts();
+
+    }
+
+    public List<Attempt> getAttemptsCompletedInRange(Date startDate, Date endDate)
+    {
+        return attemptRepository.getAttemptsCompletedInRange(startDate, endDate);
+    }
 }

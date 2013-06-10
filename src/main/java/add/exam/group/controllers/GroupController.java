@@ -7,26 +7,31 @@ import add.exam.group.helpers.GroupHelper;
 import add.exam.group.services.GroupService;
 import add.exam.model.exam.Exam;
 import add.exam.model.group.Group;
+import add.exam.model.poll.Poll;
 import add.exam.model.user.User;
+import add.exam.poll.services.PollService;
 import add.exam.user.services.LoginService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
-import java.util.Set;
 
 @Controller
 @RequestMapping(GroupController.REQUEST_URL)
 public class GroupController
 {
     public static final String REQUEST_URL = "/group";
+    private static final String REDIRECT_TO_EDIT_GROUP_URL = "redirect:/group/%s/edit.html";
 
     //templates
     private static final String EDIT_GROUP_TEMPLATE = "group/groupForm";
+    private static final String VIEW_GROUP_TEMPLATE = "group/viewGroup";
     private static final String EXAM_ROW_TEMPLATE = "common/ajax-templates/examRow";
+    private static final String POLL_ROW_TEMPLATE = "common/ajax-templates/pollRow";
     private static final String STUDENT_ROW_TEMPLATE = "common/ajax-templates/studentRow";
-    private static final String REDIRECT_TO_EDIT_GROUP_URL = "redirect:/group/%s/edit.html";
+
 
     @Inject
     private LoginService userService;
@@ -38,6 +43,9 @@ public class GroupController
     private ExamService examService;
 
     @Inject
+    private PollService pollService;
+
+    @Inject
     private CommonService commonService;
 
     @Inject
@@ -47,10 +55,20 @@ public class GroupController
     public String edit(@PathVariable Integer id, Model model){
         User user = userService.getUser();
         Group group = groupService.getGroup(id, user.getId());
-        Set<Exam> exams = group.getExams();
-        Set<User> students = group.getStudents();
-        helper.addEditAttr(model, group, exams, students);
+        helper.addEditAttr(model, group);
         return EDIT_GROUP_TEMPLATE;
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    public String viewGroup(@PathVariable Integer id, Model model){
+        User user = userService.getUser();
+        Group group = commonService.get(Group.class, id);
+        group = groupService.getGroup(id, group.getUser().getId());
+        if (!group.getStudents().contains(user)){
+            throw new AccessDeniedException("You are not member of this group");
+        }
+        helper.addEditAttr(model, group);
+        return VIEW_GROUP_TEMPLATE;
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
@@ -82,6 +100,28 @@ public class GroupController
         groupService.save(group);
         helper.addExamAttr(exam, model);
         return EXAM_ROW_TEMPLATE;
+    }
+
+    @RequestMapping(value = "/{groupId}/poll/{pollId}", method = RequestMethod.DELETE)
+    public String removePollFromGroup(@PathVariable Integer groupId, @PathVariable Integer pollId){
+        User user = userService.getUser();
+        Group group = groupService.getGroup(groupId, user.getId());
+        Poll poll = pollService.getPoll(pollId, user.getId());
+        if (group.getPolls().remove(poll)){
+            groupService.save(group);
+        }
+        return ExamController.AJAX_SUCCESS_MESSAGE_TEMPLATE;
+    }
+
+    @RequestMapping(value ="/{id}/add/poll", method = RequestMethod.POST)
+    public String addPollToGroup(@PathVariable ("id") Integer groupId, @RequestParam Integer pollId, Model model){
+        User user = userService.getUser();
+        Group group = groupService.getGroup(groupId, user.getId());
+        Poll poll = pollService.getPoll(pollId, user.getId());
+        group.getPolls().add(poll);
+        groupService.save(group);
+        helper.addPollAttr(poll, model);
+        return POLL_ROW_TEMPLATE;
     }
 
     @RequestMapping(value = "/{groupId}/exam/{examId}", method = RequestMethod.DELETE)

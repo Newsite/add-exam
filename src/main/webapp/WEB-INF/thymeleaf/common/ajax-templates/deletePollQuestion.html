@@ -1,0 +1,11 @@
+<!-- template which will return publish poll checkbox
+model attribute ${notCompletedPoll} should be defined -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:if="${notCompletedPoll}">
+        <div class="alert alert-warning">
+            <p>Poll is not completed and could not be published.</p>
+            <strong><p>Poll should contain at least one completed question</p></strong>
+        </div>
+    </div>
+</body></html>

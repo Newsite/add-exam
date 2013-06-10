@@ -4,7 +4,6 @@ import add.exam.common.repositories.CommonRepository;
 import add.exam.common.services.DateService;
 import add.exam.model.attempt.Attempt;
 import add.exam.model.attempt.AttemptQuestion;
-import add.exam.model.exam.Exam;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +22,8 @@ public class AttemptRepository
     private static final String GET_ATTEMPT_QUESTIONS_QUERY = "SELECT q from AttemptQuestion q where attempt_id = :attemptId";
     private static final String GET_USER_ATTEMPTS_QUERY = "Select a from Attempt a where user_id = :userId";
     private static final String GET_EXAM_WITH_ATTEMPTS_QUERY = "SELECT distinct(a) from Attempt a where a.exam.id = :examId and a.completed = 'true' and a.startTime between :start and :end";
+    private static final String NOT_COMPLETED_ATTEMPTS = "SELECT a from Attempt a where completed = false";
+    private static final String GET_COMPLETED_ATTEMPTS_IN_RANGE_QUERY = "SELECT a from Attempt a where a.completed = 'true' and a.startTime between :start and :end";
 
     //params
     private static final String ATTEMPT_ID = "attemptId";
@@ -72,6 +73,20 @@ public class AttemptRepository
                 .setParameter(EXAM_ID, examId)
                 .setParameter(START_DATE, dateFrom)
                 .setParameter(END_DATE, dateTo)
+                .getResultList();
+    }
+
+    public List<Attempt> getNotCompletedAttempts()
+    {
+        return entityManager.createQuery(NOT_COMPLETED_ATTEMPTS, Attempt.class)
+                .getResultList();
+    }
+
+    public List<Attempt> getAttemptsCompletedInRange(Date startDate, Date endDate)
+    {
+        return entityManager.createQuery(GET_COMPLETED_ATTEMPTS_IN_RANGE_QUERY, Attempt.class)
+                .setParameter(START_DATE, startDate)
+                .setParameter(END_DATE, endDate)
                 .getResultList();
     }
 }

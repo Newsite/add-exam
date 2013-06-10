@@ -1,0 +1,8 @@
+<!-- template which will return warning on poll question form
+model attribute ${notCompletedQuestion} should be defined -->
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div class="alert alert-error" th:if="${notCompletedQuestion}">
+        <p>Question is not completed. <strong>Question should contains at least two answers.</strong></p>
+    </div>
+</body></html>

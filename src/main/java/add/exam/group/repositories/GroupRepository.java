@@ -14,7 +14,7 @@ public class GroupRepository
 {
     //queries
     private static final String GET_TEACHER_GROUPS_QUERY = "select g from Group g where user_id = :userId";
-    private static final String GET_USER_GROUP_QUERY = "select g from Group g left join fetch g.exams left join fetch g.students where g.id = :groupId and g.user.id = :userId";
+    private static final String GET_USER_GROUP_QUERY = "select g from Group g left join fetch g.exams left join fetch g.polls left join fetch g.students where g.id = :groupId and g.user.id = :userId";
     private static final String GET_STUDENT_GROUPS_NATIVE_QUERY = "select g.* from groups g left join students_in_groups sig on g.id = sig.group_id where sig.student_id = :studentId";
 
     //attributes

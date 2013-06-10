@@ -1,6 +1,7 @@
 package add.exam.model.group;
 
 import add.exam.model.exam.Exam;
+import add.exam.model.poll.Poll;
 import add.exam.model.user.User;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,4 +51,12 @@ public class Group
             joinColumns = { @JoinColumn(name = "group_id") },
             inverseJoinColumns = { @JoinColumn(name = "exam_id") })
     private Set<Exam> exams;
+
+    @Getter
+    @Setter
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "polls_in_groups",
+            joinColumns = { @JoinColumn(name = "group_id") },
+            inverseJoinColumns = { @JoinColumn(name = "poll_id") })
+    private Set<Poll> polls;
 }
